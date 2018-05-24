@@ -1,0 +1,134 @@
+* {
+    box-sizing: border-box;
+    font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+}
+
+
+/* Landing Page Styling */
+
+body.background-image-site {
+    background: url(../img/site_background.jpg);
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+}
+
+body.margin-0 {
+    margin: 0;
+}
+
+.header {
+    padding: 1px;
+    text-align: center;
+    background-color: beige;
+    color: black;
+}
+
+.header>a:link {
+    color: black;
+    text-decoration: none;
+}
+
+.header>a:visited {
+    color: black;
+}
+
+.header h1 {
+    font-size: 200%;
+}
+
+.flex-container {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.flex-container-column {
+    display: flex;
+    flex-flow: column wrap;
+}
+
+.flex-50 {
+    flex-basis: 50%;
+}
+
+.flex-center {
+    margin: auto;
+}
+
+.landing-instruction {
+    background: rgba(245, 245, 220, 0.85);
+    height: 150px;
+    border-radius: 5px;
+    padding: 10px;
+}
+
+.landing-instruction-left {
+    width: 100%;
+    align-self: flex-start;
+}
+
+.landing-instruction-right {
+    width: 100%;
+    align-self: flex-end;
+}
+
+.landing-instruction>p {
+    color: black;
+    font-size: 1.5rem;
+    text-align: center;
+}
+
+.landing-instruction:hover {
+    background: rgb(255, 255, 198);
+}
+
+@media screen and (min-width: 750px) {
+    .landing-instruction-left {
+        width: 50%;
+        align-self: flex-start;
+    }
+    .landing-instruction-right {
+        width: 50%;
+        align-self: flex-end;
+    }
+}
+
+.justify-content-evenly {
+    justify-content: space-evenly;
+}
+
+
+/* General button styling */
+
+.btn {
+    padding: 15px;
+    cursor: pointer;
+    opacity: 0.9;
+    border-radius: 5px;
+    max-height: 60px;
+}
+
+.btn-success {
+    background-color: green;
+    color: white;
+}
+
+.btn-neutral {
+    background-color: blue;
+    color: white;
+}
+
+.btn-danger {
+    padding: 15px;
+    background-color: red;
+    color: white;
+}
+
+.btn:hover {
+    opacity: 1;
+}
+
+.btn>a {
+    color: white;
+    text-decoration: none;
+}
