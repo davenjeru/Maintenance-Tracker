@@ -180,3 +180,119 @@ body.background-image-form {
     background-repeat: no-repeat;
     background-attachment: fixed;
 }
+
+
+/* 
+Navigation bar Styling
+*/
+
+body.margin-0 {
+    margin: 0;
+}
+
+nav>ul.navbar {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    background-color: beige;
+    top: 0;
+}
+
+nav>ul.navbar li {
+    float: left;
+}
+
+nav>ul.navbar li.right {
+    float: right;
+}
+
+nav>ul.navbar li.active {
+    background-color: burlywood;
+}
+
+nav>ul.navbar li a {
+    display: block;
+    color: black;
+    text-align: center;
+    padding: 14px 16px;
+    text-decoration: none;
+}
+
+nav>ul.navbar li a:hover {
+    background-color: burlywood;
+}
+
+@media screen and (max-width: 600px) {
+    nav>ul.navbar li {
+        float: none;
+    }
+    nav>ul.navbar li.right {
+        float: none;
+    }
+}
+
+
+/* Styling how content will be displayed */
+
+div.card {
+    width: 100%;
+    box-shadow: 0 4px 20px 0 rgba(0, 0, 0, 0.21), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+    background: rgba(245, 245, 220, 0.85);
+    text-align: center;
+    margin: 10px 0px;
+    border-radius: 10px;
+}
+
+div.card-header-approved {
+    background: rgba(0, 156, 8, 0.85);
+    color: white;
+}
+
+div.card-header-rejected {
+    background: rgba(197, 3, 3, 0.85);
+    color: white;
+}
+
+div.card-header-pending {
+    background: rgba(153, 152, 152, 0.89);
+    color: white;
+}
+
+div.card-header-resolved {
+    background: rgba(0, 42, 155, 0.85);
+    color: white;
+}
+
+div.card-header>h1 {
+    margin: 0px;
+    padding: 0px;
+}
+
+div.card-body {
+    overflow: hidden;
+    height: 200px;
+    padding: 10px
+}
+
+div.card-body>p {
+    word-break: break-all;
+    white-space: normal;
+    word-wrap: break-word;
+}
+
+div.card-footer {
+    padding: 10px;
+}
+
+@media screen and (min-width: 600px) {
+    div.card {
+        flex-basis: 45%;
+    }
+}
+
+@media screen and (min-width: 800px) {
+    div.card {
+        flex-basis: 30%;
+    }
+}
