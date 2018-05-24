@@ -132,3 +132,51 @@ body.margin-0 {
     color: white;
     text-decoration: none;
 }
+
+
+/* Styling the form */
+
+.form-container {
+    display: flex;
+    flex-direction: column;
+    background: rgba(245, 245, 220, 0.6);
+    text-align: center;
+    padding: 20px;
+    position: relative;
+    max-width: 600px;
+}
+
+form {
+    border: 1px solid #ccc;
+}
+
+.form-control {
+    display: flex;
+    flex-direction: column;
+}
+
+.form-control label {
+    align-self: center;
+}
+
+.form-header {
+    align-self: center;
+}
+
+input {
+    height: 2.5rem;
+    border: 2px solid white;
+    box-shadow: inset 0 0 8px rgba(0, 0, 0, 0.1), 0 0 16px rgba(0, 0, 0, 0.1);
+    padding: 15px;
+    background: rgba(255, 255, 255, 1);
+    margin: 0 0 10px 0;
+    font-size: 1rem;
+    flex: 1;
+}
+
+body.background-image-form {
+    background: url(../img/form_background.jpg);
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+}
