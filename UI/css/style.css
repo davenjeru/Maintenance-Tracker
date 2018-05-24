@@ -173,3 +173,10 @@ input {
     font-size: 1rem;
     flex: 1;
 }
+
+body.background-image-form {
+    background: url(../img/form_background.jpg);
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+}
