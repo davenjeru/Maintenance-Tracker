@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="../css/style.css">
+    <title>My Profile</title>
+</head>
+
+<body class="background-image-site margin-0">
+    <header class="header">
+        <a href="index-user.html">
+            <h1>Maintenance Tracker</h1>
+        </a>
+        <p>For all your maintenance and repair needs</p>
+    </header>
+    <nav id="navbar">
+        <ul class="navbar">
+            <li><a href="index-user.html">My Requests</a></li>
+            <li><a href="make-request.html">Make Request</a></li>
+            <li class="right active"><a href="my-profile.html">My Profile</a></li>
+
+        </ul>
+    </nav>
+    <div class="flex-container justify-content-evenly">
+        <div class="profile-card card">
+            <img src="../img/img_avatar.png" alt="Avatar" style="width:100%">
+            <div class="profile-card-body">
+                <h4><b>Dave Mathews</b></h4>
+                <p>davenmathews@gmail.com</p><span><a href="index.html">Logout</a></span>
+            </div>
+        </div>
+        <div>
+            <div class="form-container">
+                <form action="" method="POST">
+                    <div class="form-container">
+                        <br>
+                        <div class="flex-container">
+                            <div class="form-control">
+                                <label for="firstName"><b>First Name</b></label>
+                                <input type="text" placeholder="First Name" name="firstName" required>
+                            </div>
+                            <div class="form-control">
+                                <label for="lastName"><b>Last Name</b></label>
+                                <input type="text" placeholder="Last Name" name="lastName" required>
+                            </div>
+                        </div>
+                        <div class="form-control">
+                            <label for="psw"><b>Old Password</b></label>
+                            <input type="password" placeholder="Enter Old Password" name="oldpsw" required>
+
+                        </div>
+                        <div class="form-control">
+                            <label for="psw"><b>New Password</b></label>
+                            <input type="password" placeholder="Enter New Password" name="newpsw" required>
+
+                        </div>
+                        <div class="form-control">
+                            <label for="psw"><b>Confirm New Password</b></label>
+                            <input type="password" placeholder="Confirm New Password" name="confirmpsw" required>
+
+                        </div>
+                        <button class="btn btn-success">Save</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

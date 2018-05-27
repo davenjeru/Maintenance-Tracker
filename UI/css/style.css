@@ -354,3 +354,33 @@ div.card-footer {
     text-align: center;
     background-color: burlywood;
 }
+
+
+/* Profile Card Styling */
+
+.profile-card {
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+    width: 40%;
+    background-color: beige;
+}
+
+.profile-card img {
+    border-top-right-radius: 10px;
+    border-top-left-radius: 10px;
+}
+
+.profile-card:hover {
+    box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.2);
+}
+
+.profile-card-body {
+    padding: 2px 16px;
+    overflow-wrap: break-word;
+}
+
+@media screen and (max-width:600px) {
+    .profile-card {
+        width: 100%;
+        background-color: beige;
+    }
+}
