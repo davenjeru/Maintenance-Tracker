@@ -56,40 +56,21 @@ body.margin-0 {
 }
 
 .landing-instruction {
-    background: rgba(245, 245, 220, 0.85);
-    height: 150px;
+    background-color: beige;
+    height: fit-content;
     border-radius: 5px;
     padding: 10px;
 }
 
-.landing-instruction-left {
-    width: 100%;
-    align-self: flex-start;
-}
-
-.landing-instruction-right {
-    width: 100%;
-    align-self: flex-end;
-}
-
 .landing-instruction>p {
     color: black;
-    font-size: 1.5rem;
+    font-size: 1.3rem;
     text-align: center;
 }
 
-.landing-instruction:hover {
-    background: rgb(255, 255, 198);
-}
-
-@media screen and (min-width: 750px) {
-    .landing-instruction-left {
-        width: 50%;
-        align-self: flex-start;
-    }
-    .landing-instruction-right {
-        width: 50%;
-        align-self: flex-end;
+@media screen and (max-width: 600px) {
+    .flex-50 {
+        flex-basis: 100%;
     }
 }
 
@@ -128,7 +109,7 @@ body.margin-0 {
     opacity: 1;
 }
 
-.btn>a {
+a.btn {
     color: white;
     text-decoration: none;
 }
