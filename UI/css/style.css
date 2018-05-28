@@ -100,7 +100,6 @@ body.margin-0 {
 }
 
 .btn-danger {
-    padding: 15px;
     background-color: red;
     color: white;
 }
@@ -112,6 +111,7 @@ body.margin-0 {
 a.btn {
     color: white;
     text-decoration: none;
+    padding: 0px, 15px, 0px, 15px;
 }
 
 
@@ -268,9 +268,8 @@ div.card-body {
 }
 
 div.card-body>p {
-    word-break: break-all;
+    word-break: keep-all;
     white-space: normal;
-    word-wrap: break-word;
 }
 
 div.card-footer {
