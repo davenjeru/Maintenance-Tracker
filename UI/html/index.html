@@ -16,32 +16,44 @@
         </a>
         <p>For all your maintenance and repair needs</p>
     </header>
-    <main class="flex-container-column">
-        <div class="landing-instruction flex-50 flex-center">
-            <p>This application gives you the ability to order maintenance and repair services at the click of a button</p>
-        </div>
-        <br>
-        <div class="landing-instruction landing-instruction-left">
-            <p>Create a free account with your valid Email address since that is how we will be contacting you</p>
-        </div>
-        <div class="landing-instruction landing-instruction-right">
-            <p>On your home page, you will see all your pending requests</p>
-        </div>
-
-        <div class="landing-instruction landing-instruction-left">
-            <p>Click on "Make request" to make a request. Fill in the fields and confirm when done.</p>
+    <br>
+    <main class="flex-container justify-content-evenly">
+        <div class="flex-50">
+            <div class="card landing-instruction">
+                <p>This application gives you the ability to order maintenance and repair services at the click of a button</p>
+                <p>Create a free account with your valid Email address since that is how we will be contacting you</p>
+                <p>On your home page, you will see all your pending requests</p>
+                <p>Click on "Make request" to make a request. Fill in the fields and confirm when done.</p>
+                <p>If your request is approved then a maintenance team will be sent your way</p>
+            </div>
         </div>
 
-        <div class="landing-instruction landing-instruction-right">
-            <p>If your request is approved then a maintenance team will be sent your way</p>
-        </div>
-        <br>
-        <div class="landing-instruction flex-container justify-content-evenly">
-            <button class="btn btn-success"><a href="user-register.html">User Register</a></button>
-            <button class="btn btn-success"><a href="user-login.html">User Login</a></button>
-            <button class="btn btn-danger"><a href="admin-login.html">Admin Login</a></button>
+        <div class="form-container">
+            <form>
+                <div class="form-container">
+                    <h1 class="form-header">Login</h1>
+                    <br>
+                    <div class="form-control">
+                        <label for="email"><b>Email</b></label>
+                        <input type="text" placeholder="Enter Email" name="email" required>
+                    </div>
+                    <div class="form-control">
+                        <label for="psw"><b>Password</b></label>
+                        <input type="password" placeholder="Enter Password" name="psw" required>
+
+                    </div>
+                    <select id="role" onchange="changeLink()">
+                        <option value="User">User</option>
+                        <option value="Admin">Admin</option>
+                    </select>
+                    <br>
+                    <a class="btn btn-success" id="login" href="index-user.html">Login</a>
+                    <p>Are you new here? You can <a href="./user-register.html">register here</a></p>
+                </div>
+            </form>
         </div>
     </main>
+    <script src="../js/script.js"></script>
 
 </body>
 
