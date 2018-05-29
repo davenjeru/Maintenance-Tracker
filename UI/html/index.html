@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Home</title>
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+
+<body class="background-image-site margin-0">
+    <header class="header">
+        <a href="index.html">
+            <h1>Maintenance Tracker</h1>
+        </a>
+        <p>For all your maintenance and repair needs</p>
+    </header>
+    <br>
+    <main class="flex-container justify-content-evenly">
+        <div class="flex-50">
+            <div class="card landing-instruction">
+                <p>This application gives you the ability to order maintenance and repair services at the click of a button</p>
+                <p>Create a free account with your valid Email address since that is how we will be contacting you</p>
+                <p>On your home page, you will see all your pending requests</p>
+                <p>Click on "Make request" to make a request. Fill in the fields and confirm when done.</p>
+                <p>If your request is approved then a maintenance team will be sent your way</p>
+            </div>
+        </div>
+
+        <div class="form-container">
+            <form>
+                <div class="form-container">
+                    <h1 class="form-header">Login</h1>
+                    <br>
+                    <div class="form-control">
+                        <label for="email"><b>Email</b></label>
+                        <input type="text" placeholder="Enter Email" name="email" required>
+                    </div>
+                    <div class="form-control">
+                        <label for="psw"><b>Password</b></label>
+                        <input type="password" placeholder="Enter Password" name="psw" required>
+
+                    </div>
+                    <select id="role" onchange="changeLink()">
+                        <option value="User">User</option>
+                        <option value="Admin">Admin</option>
+                    </select>
+                    <br>
+                    <a class="btn btn-success" id="login" href="index-user.html">Login</a>
+                    <p>Are you new here? You can <a href="./user-register.html">register here</a></p>
+                </div>
+            </form>
+        </div>
+    </main>
+    <script src="../js/script.js"></script>
+
+</body>
+
+</html>

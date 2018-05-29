@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="../css/style.css">
+    <title>Create Request</title>
+</head>
+
+<body class="background-image-form margin-0">
+    <header class="header">
+        <a href="index.html">
+            <h1>Maintenance Tracker</h1>
+        </a>
+        <p>For all your maintenance and repair needs</p>
+    </header>
+    <nav id="navbar">
+        <ul class="navbar">
+            <li><a href="index-user.html">My Requests</a></li>
+            <li class="active"><a href="#">Make Request</a></li>
+            <li class="right"><a href="my-profile.html">My Profile</a></li>
+
+        </ul>
+    </nav>
+    <div class="form-container flex-center">
+        <form action="" method="POST">
+            <div class="form-container card">
+                <h1 class="form-header">Create a Request</h1>
+                <br>
+                <div class="form-control">
+                    <label for="title"><b>Title</b></label>
+                    <input type="text" placeholder="Example: Car Repair" name="title" required>
+                </div>
+                <div class="form-control">
+                    <label for="description"><b>Description</b></label>
+                    <textarea type="text" placeholder="Enter a short description of what you want repaired or maintained" name="description" required></textarea>
+
+                </div>
+                <button type="submit" class="btn btn-success"><a>Submit Request</a></button>
+            </div>
+        </form>
+    </div>
+
+</body>
+
+
+</html>
