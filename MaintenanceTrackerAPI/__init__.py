@@ -1,6 +1,6 @@
 from flask import Flask
 
-from MaintenaceTrackerAPI.api.v1 import api_v1_blueprint
+from MaintenanceTrackerAPI.api.v1 import api_v1_blueprint
 
 # initiate app
 app = Flask(__name__)
