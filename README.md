@@ -1,4 +1,4 @@
-# Maintenance-Tracker
+# Maintenance-Tracker [![Maintainability](https://api.codeclimate.com/v1/badges/b457b83d3a9f810225e0/maintainability)](https://codeclimate.com/github/davenmathews/Maintenance-Tracker/maintainability)
 This is an application that provides users with the ability to reach out to operations or repairs department regarding repair or maintenance requests and monitor the status of their request.
 
 ## User Interface Features
@@ -18,4 +18,4 @@ This is an application that provides users with the ability to reach out to oper
 ### Deployment
 Github pages: https://davenmathews.github.io/Maintenance-Tracker/UI/html/index.html
 
-## API Features [![Build Status](https://travis-ci.org/davenmathews/Maintenance-Tracker.svg?branch=master)](https://travis-ci.org/davenmathews/Maintenance-Tracker) [![Coverage Status](https://coveralls.io/repos/github/davenmathews/Maintenance-Tracker/badge.svg?branch=master)](https://coveralls.io/github/davenmathews/Maintenance-Tracker?branch=master)
+## API Features [![Build Status](https://travis-ci.org/davenmathews/Maintenance-Tracker.svg?branch=api)](https://travis-ci.org/davenmathews/Maintenance-Tracker) [![Coverage Status](https://coveralls.io/repos/github/davenmathews/Maintenance-Tracker/badge.svg?branch=api)](https://coveralls.io/github/davenmathews/Maintenance-Tracker?branch=api)
