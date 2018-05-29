@@ -1,17 +1,18 @@
 from flask_testing import TestCase
 
-from MaintenanceTrackerAPI import app
+from MaintenanceTrackerAPI import create_app as create
 from MaintenanceTrackerAPI.api.v1 import api_v1
 from MaintenanceTrackerAPI.api.v1.users import UsersAllRequests, UsersSingleRequests
 
 
 class AppTestCase(TestCase):
     def create_app(self):
-        app.testing = True
+        app = create('testing')
         return app
 
     def setUp(self):
-        self.client = self.create_app().test_client()
+        app = self.create_app()
+        self.client = app.test_client()
 
     def tearDown(self):
         pass

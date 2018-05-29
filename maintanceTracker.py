@@ -1,4 +1,9 @@
-from MaintenanceTrackerAPI import app
+import os
+
+from MaintenanceTrackerAPI import create_app
+
+config_name = os.getenv('APP_CONFIG_NAME')  # config_name = "development"
+app = create_app(config_name)
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run()
