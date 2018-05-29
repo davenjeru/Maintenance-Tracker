@@ -1,7 +1,7 @@
 from flask import Blueprint
 from flask_restplus import Api
 
-from MaintenaceTrackerAPI.api.v1.users import users_ns
+from MaintenanceTrackerAPI.api.v1.users import users_ns
 
 # initiate blueprint
 api_v1_blueprint = Blueprint('apiV1', __name__, url_prefix='/api/v1')

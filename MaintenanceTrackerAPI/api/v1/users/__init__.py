@@ -1,7 +1,7 @@
 from flask_restplus.namespace import Namespace
 
-from MaintenaceTrackerAPI.api.v1.users.users_all_requests import UsersAllRequests
-from MaintenaceTrackerAPI.api.v1.users.users_single_request import UsersSingleRequests
+from MaintenanceTrackerAPI.api.v1.users.users_all_requests import UsersAllRequests
+from MaintenanceTrackerAPI.api.v1.users.users_single_request import UsersSingleRequests
 
 # initiate the namespace
 users_ns = Namespace('users', description='Operations related to users')

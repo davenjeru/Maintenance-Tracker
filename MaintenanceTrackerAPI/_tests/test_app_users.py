@@ -1,8 +1,8 @@
 from flask_testing import TestCase
 
-from MaintenaceTrackerAPI import app
-from MaintenaceTrackerAPI.api.v1 import api_v1
-from MaintenaceTrackerAPI.api.v1.users import UsersAllRequests, UsersSingleRequests
+from MaintenanceTrackerAPI import app
+from MaintenanceTrackerAPI.api.v1 import api_v1
+from MaintenanceTrackerAPI.api.v1.users import UsersAllRequests, UsersSingleRequests
 
 
 class AppTestCase(TestCase):
