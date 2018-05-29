@@ -5,4 +5,4 @@ python:
 install: pip install -r requirements.txt
 
 script: nosetests ./MaintenanceTrackerAPI/_tests --with-coverage --cover-package=./MaintenanceTrackerAPI
-after_success: coveralls
+after_script: coveralls
