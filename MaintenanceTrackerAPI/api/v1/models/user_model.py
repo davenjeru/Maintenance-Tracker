@@ -165,6 +165,10 @@ class Consumer(User):
         self.__role = 'Consumer'
         self.__request_count = 0
 
+    @property
+    def role(self):
+        return self.__role
+
 
 class Admin(User):
     pass
