@@ -174,3 +174,26 @@ class RequestTestCase(unittest.TestCase):
             self.request.delete(self.admin)
         exception = a.exception
         self.assertEqual('Administrator not allowed to delete request', exception.msg)
+
+    def test_consumer_edits_request(self):
+        self.request.edit(self.consumer,
+                          dict(title='Another Title',
+                               description='Another description for testing and must reach forty characters'))
+        self.assertEqual(self.request.title, 'Another Title')
+
+    def test_admin_edits_request_fail(self):
+        with self.assertRaises(RequestTransactionError) as a:
+            self.request.edit(self.admin,
+                              dict(title='Another Title',
+                                   description='Another description for testing and must reach forty characters'))
+        exception = a.exception
+        self.assertEqual('Administrator not allowed to edit request', exception.msg)
+
+    def test_consumer_edits_cancelled_request_fail(self):
+        self.request.cancel(self.consumer)
+        with self.assertRaises(RequestTransactionError) as a:
+            self.request.edit(self.consumer,
+                              dict(title='Another Title',
+                                   description='Another description for testing and must reach forty characters'))
+        exception = a.exception
+        self.assertEqual('cannot edit a request which is Cancelled', exception.msg)
