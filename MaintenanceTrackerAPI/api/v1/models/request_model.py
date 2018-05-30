@@ -151,7 +151,7 @@ class Request(object):
 
     def cancel(self, user: Consumer):
         # check the role of the user
-        self.__check_for_consumer(user)
+        self.__check_for_consumer(user, 'cancel')
 
         # check the status of the request
         if self.status != 'Pending Approval':
@@ -163,8 +163,17 @@ class Request(object):
     def edit(self):
         pass
 
-    def delete(self):
-        pass
+    def delete(self, user: Consumer):
+        # check the role of the user
+        self.__check_for_consumer(user, 'delete')
+
+        # check the status of the request
+        if self.status != 'Resolved' and self.status != 'Rejected' and self.status != 'Cancelled':
+            raise RequestTransactionError('cannot delete a request which is {}'.format(self.status))
+
+        requests_list.remove(self)
+        del self
+        return True
 
     @staticmethod
     def __check_for_admin(user):
@@ -172,6 +181,6 @@ class Request(object):
             raise RequestTransactionError('{} not allowed to change request status'.format(user.role))
 
     @staticmethod
-    def __check_for_consumer(user):
+    def __check_for_consumer(user, context: str):
         if user.role != 'Consumer':
-            raise RequestTransactionError('{} not allowed to cancel request'.format(user.role))
+            raise RequestTransactionError('{0} not allowed to {1} request'.format(user.role, context))

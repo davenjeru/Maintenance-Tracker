@@ -159,6 +159,7 @@ class RequestTestCase(unittest.TestCase):
         self.assertEqual('Cancelled', self.request.status)
 
     def test_consumer_deletes_request(self):
+        self.request.cancel(self.consumer)
         self.request.delete(self.consumer)
         self.assertNotIn(self.request, requests_list)
 
