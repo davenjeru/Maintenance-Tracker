@@ -1,7 +1,7 @@
 import datetime
 import string
 
-from .user_model import Consumer
+from .user_model import Consumer, Admin
 
 requests_list = []
 
@@ -105,8 +105,17 @@ class Request(object):
                     if char_list[i + 1] in string.punctuation and char_list[i] != '.':
                         raise AssertionError('please check the punctuation in your {}'.format(name))
 
-    def approve(self):
-        pass
+    def approve(self, user: Admin):
+
+        # check the role of the user
+        self.__check_for_admin(user)
+
+        # check the status of the request
+        if self.status != 'Pending Approval':
+            raise RequestTransactionError('cannot approve a request which is {}'.format(self.status))
+
+        self.status = 'Approved'
+        self.last_modified = datetime.datetime.now()
 
     def reject(self):
         pass
@@ -125,3 +134,8 @@ class Request(object):
 
     def delete(self):
         pass
+
+    @staticmethod
+    def __check_for_admin(user):
+        if user.role != 'Administrator':
+            raise RequestTransactionError('{} not allowed to change request status'.format(user.role))
