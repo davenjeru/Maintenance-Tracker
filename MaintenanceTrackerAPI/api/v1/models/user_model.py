@@ -171,4 +171,18 @@ class Consumer(User):
 
 
 class Admin(User):
-    pass
+    """
+        This is the class that handles administrators.
+
+        Administrators can:
+        - View all requests made to the app
+        - Update request statuses
+    """
+
+    def __init__(self, email: str, password: str, security_question: str, security_answer: str):
+        super().__init__(email, password, security_question, security_answer)
+        self.__role = 'Administrator'
+
+    @property
+    def role(self):
+        return self.__role
