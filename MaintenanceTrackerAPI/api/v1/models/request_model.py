@@ -74,3 +74,9 @@ class Request(object):
             raise AssertionError('{0} too long. Max of {1} characters allowed'.format(name, max_length))
         if len(item) < min_length:
             raise AssertionError('{0} too short. Min of {1} characters allowed'.format(name, min_length))
+
+        item_words = item.split(' ')
+
+        for word in item_words:
+            if not word:
+                raise AssertionError('Please check the spacing on your {}'.format(name))
