@@ -1,6 +1,6 @@
 import unittest
 
-from MaintenanceTrackerAPI.api.v1.models.user_model import User, UserTransactionError, users_list
+from MaintenanceTrackerAPI.api.v1.models.user_model import User, UserTransactionError, users_list, Admin, Consumer
 
 
 class ModelsTestCase(unittest.TestCase):
@@ -60,3 +60,11 @@ class ModelsTestCase(unittest.TestCase):
             self.u.reset_password('What is your favourite company?', 'no answer', 'another.Pa55word')
         exception = a.exception
         self.assertEqual('wrong security answer!', exception.msg)
+
+    def test_create_admin_user_pass(self):
+        admin = Admin('email@com', 'password.Pa55word', 'What is your favourite company?', 'company')
+        self.assertEqual('Administrator', admin.role)
+
+    def test_create_consumer_user_pass(self):
+        consumer = Consumer('email@com', 'password.Pa55word', 'What is your favourite company?', 'company')
+        self.assertEqual('Consumer', consumer.role)
