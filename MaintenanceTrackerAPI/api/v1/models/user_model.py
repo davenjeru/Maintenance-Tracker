@@ -1,3 +1,5 @@
+import re
+
 from werkzeug.security import generate_password_hash, check_password_hash
 
 users_list = []
@@ -25,6 +27,12 @@ class User(object):
     id = 1
 
     def __init__(self, email: str, password: str, security_question: str, security_answer: str):
+
+        try:
+            self._validate_user_details('email', email)
+            self._validate_user_details('password', password)
+        except AssertionError as a:
+            raise UserTransactionError(a.args[0])
 
         for user in users_list:
             if user.email == email:
@@ -63,9 +71,31 @@ class User(object):
             if check_password_hash(self.security_answer, security_answer):
                 self.password_hash = generate_password_hash(new_password)
             else:
-                raise UserTransactionError('wrong security answer')
+                raise UserTransactionError('wrong security answer!')
         else:
             raise UserTransactionError('wrong security question!')
+
+    @staticmethod
+    def _validate_user_details(name: str, item: str):
+        """
+        Validates input depending on the given context
+        :param name: context of validation
+        :param item: item to be validated
+        """
+
+        email_pattern = re.compile(r"(^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$)")
+        password_pattern = re.compile(
+            r"(?=^.{12,80}$)(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^;*()_+}{:'?/.,])(?!.*\s).*$")
+
+        if not item:
+            raise AssertionError('missing \"{0}\" parameter'.format(name))
+
+        if name == 'email':
+            if not bool(email_pattern.match(item)):
+                raise AssertionError('email address syntax is invalid')
+        elif name == 'password':
+            if not bool(password_pattern.match(item)):
+                raise AssertionError('password syntax is invalid')
 
 
 class Consumer(User):
