@@ -99,3 +99,12 @@ class RequestTestCase(unittest.TestCase):
                     'Water spilled onto my Aka..\'.\';.\'.;\'. I need it reAka..\'.\';.\'.;\'.placed')
         exception = a.exception
         self.assertEqual('please check the punctuation in your description', exception.msg)
+
+    def test_make_request_twice(self):
+        Request(self.consumer, 'Repair', 'Laptop Repair',
+                'Water spilled onto my keyboard. I need it replaced')
+        with self.assertRaises(RequestTransactionError) as a:
+            Request(self.consumer, 'Repair', 'Laptop Repair',
+                    'Water spilled onto my keyboard. I need it replaced')
+            exception = a.exception
+            self.assertEqual('please check the punctuation in your description', exception.msg)
