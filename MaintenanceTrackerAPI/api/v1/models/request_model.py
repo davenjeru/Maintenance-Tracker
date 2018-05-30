@@ -1,6 +1,6 @@
 import datetime
 
-from .user_model import User
+from .user_model import Consumer
 
 requests_list = []
 
@@ -29,7 +29,10 @@ class Request(object):
     """
     id = 1
 
-    def __init__(self, user: User, request_type: str, title: str, description: str):
+    def __init__(self, user: Consumer, request_type: str, title: str, description: str):
+        if user.role != 'Consumer':
+            raise RequestTransactionError('Administrators cannot make requests!', 403)
+
         self.id = Request.id
         self.user_id = user.id
         self.type = request_type
