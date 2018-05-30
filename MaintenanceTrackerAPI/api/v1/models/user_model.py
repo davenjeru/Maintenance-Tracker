@@ -52,6 +52,21 @@ class User(object):
         """
         return check_password_hash(self.password_hash, password)
 
+    def reset_password(self, security_question: str, security_answer: str, new_password: str):
+        """
+        Enables user to reset password
+        :param security_question: The security question that the user chose
+        :param security_answer: The answer to the above question
+        :param new_password: The new password to be set
+        """
+        if self.security_question == security_question:
+            if check_password_hash(self.security_answer, security_answer):
+                self.password_hash = generate_password_hash(new_password)
+            else:
+                raise UserTransactionError('wrong security answer')
+        else:
+            raise UserTransactionError('wrong security question!')
+
 
 class Consumer(User):
     pass
@@ -59,4 +74,3 @@ class Consumer(User):
 
 class Admin(User):
     pass
-
