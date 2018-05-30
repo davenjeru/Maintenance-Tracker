@@ -125,6 +125,8 @@ class RequestTestCase(unittest.TestCase):
         self.assertEqual('In Progress', self.request.status)
 
     def test_admin_resolves_request(self):
+        self.request.approve(self.admin)
+        self.request.in_progress(self.admin)
         self.request.resolve(self.admin)
         self.assertEqual('Resolved', self.request.status)
 

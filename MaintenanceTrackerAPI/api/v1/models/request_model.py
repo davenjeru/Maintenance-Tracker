@@ -139,8 +139,15 @@ class Request(object):
         self.status = 'In Progress'
         self.last_modified = datetime.datetime.now()
 
-    def resolve(self):
-        pass
+    def resolve(self, user):
+        self.__check_for_admin(user)
+
+        # check the status of the request
+        if self.status != 'In Progress':
+            raise RequestTransactionError('cannot resolve a request which is {}'.format(self.status))
+
+        self.status = 'Resolved'
+        self.last_modified = datetime.datetime.now()
 
     def cancel(self):
         pass
