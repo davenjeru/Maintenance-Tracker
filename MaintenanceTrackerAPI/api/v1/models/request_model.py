@@ -41,6 +41,10 @@ class Request(object):
         except AssertionError as a:
             raise RequestTransactionError(a.args[0])
 
+        for post in requests_list:
+            if post.title == title and post.description == description:
+                raise RequestTransactionError('similar post exists')
+
         self.id = Request.id
         self.user_id = user.id
         self.type = request_type
