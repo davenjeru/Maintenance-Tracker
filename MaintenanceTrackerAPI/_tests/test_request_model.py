@@ -120,6 +120,7 @@ class RequestTestCase(unittest.TestCase):
         self.assertEqual('Rejected', self.request.status)
 
     def test_admin_marks_request_in_progress(self):
+        self.request.approve(self.admin)
         self.request.in_progress(self.admin)
         self.assertEqual('In Progress', self.request.status)
 

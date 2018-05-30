@@ -123,13 +123,21 @@ class Request(object):
 
         # check the status of the request
         if self.status != 'Pending Approval':
-            raise RequestTransactionError('cannot approve a request which is {}'.format(self.status))
+            raise RequestTransactionError('cannot reject a request which is {}'.format(self.status))
 
         self.status = 'Rejected'
         self.last_modified = datetime.datetime.now()
 
-    def in_progress(self):
-        pass
+    def in_progress(self, user):
+        # check the role of the user
+        self.__check_for_admin(user)
+
+        # check the status of the request
+        if self.status != 'Approved':
+            raise RequestTransactionError('cannot in progress a request which is {}'.format(self.status))
+
+        self.status = 'In Progress'
+        self.last_modified = datetime.datetime.now()
 
     def resolve(self):
         pass
