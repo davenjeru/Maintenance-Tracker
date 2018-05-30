@@ -63,10 +63,10 @@ class ModelsTestCase(unittest.TestCase):
 
     def test_create_admin_user_pass(self):
         admin = Admin('admin@company.com', 'password.Pa55word', 'What is your favourite company?',
-                      'company', "Administrator")
+                      'company')
         self.assertEqual('Administrator', admin.role)
 
     def test_create_consumer_user_pass(self):
         consumer = Consumer('consumer@company.com', 'password.Pa55word', 'What is your favourite company?',
-                            'company', "Consumer")
+                            'company')
         self.assertEqual('Consumer', consumer.role)
