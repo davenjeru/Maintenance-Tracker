@@ -44,6 +44,7 @@ class Request(object):
         for post in requests_list:
             if post.title == title and post.description == description:
                 raise RequestTransactionError('similar post exists')
+        # TODO check for the request status to allow re-submission of a request that has already been resolved/rejected
 
         self.id = Request.id
         self.user_id = user.id
@@ -103,3 +104,24 @@ class Request(object):
                         continue
                     if char_list[i + 1] in string.punctuation and char_list[i] != '.':
                         raise AssertionError('please check the punctuation in your {}'.format(name))
+
+    def approve(self):
+        pass
+
+    def reject(self):
+        pass
+
+    def in_progress(self):
+        pass
+
+    def resolve(self):
+        pass
+
+    def cancel(self):
+        pass
+
+    def edit(self):
+        pass
+
+    def delete(self):
+        pass
