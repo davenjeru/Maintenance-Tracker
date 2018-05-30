@@ -169,6 +169,18 @@ class Consumer(User):
     def role(self):
         return self.__role
 
+    def make_request(self):
+        pass
+
+    def edit_request(self):
+        pass
+
+    def get_my_requests(self):
+        pass
+
+    def delete_request(self):
+        pass
+
 
 class Admin(User):
     """
@@ -186,3 +198,9 @@ class Admin(User):
     @property
     def role(self):
         return self.__role
+
+    def get_all_requests(self):
+        pass
+
+    def update_request_status(self):
+        pass
