@@ -78,7 +78,7 @@ class User(object):
                 except AssertionError as a:
                     raise UserTransactionError(a.args[0])
             else:
-                raise UserTransactionError('wrong security answer')
+                raise UserTransactionError('wrong security answer!')
         else:
             raise UserTransactionError('wrong security question!')
 
@@ -150,7 +150,20 @@ class User(object):
 
 
 class Consumer(User):
-    pass
+    """
+    This is the class that handles consumers.
+
+    Consumers can:
+    - Make requests
+    - Edit requests
+    - View their own requests
+    - Delete requests
+    """
+
+    def __init__(self, email: str, password: str, security_question: str, security_answer: str, role: str):
+        super().__init__(email, password, security_question, security_answer)
+        self.role = role
+        self.request_count = 0
 
 
 class Admin(User):
