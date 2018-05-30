@@ -1,4 +1,5 @@
 import datetime
+import string
 
 from .user_model import Consumer
 
@@ -75,8 +76,22 @@ class Request(object):
         if len(item) < min_length:
             raise AssertionError('{0} too short. Min of {1} characters allowed'.format(name, min_length))
 
+        if item[0] not in list(string.ascii_letters) + list(string.digits) + ['\'', '\"', '(']:
+            raise AssertionError('please enter a valid {}'.format(name))
+
+        if str(item[-1]) not in list(string.ascii_letters) + list(string.digits) + list('\'\").?!'):
+            raise AssertionError('please enter a valid {}'.format(name))
+
         item_words = item.split(' ')
 
         for word in item_words:
             if not word:
                 raise AssertionError('Please check the spacing on your {}'.format(name))
+
+            char_list = list(word)
+            for i in range(len(char_list) - 1):
+                if char_list[i] in string.punctuation and char_list[i] != '.':
+                    if char_list[i] in ['!', '?', '.'] and char_list[i + 1] in ['\'', '\"']:
+                        continue
+                    if char_list[i + 1] in string.punctuation and char_list[i] != '.':
+                        raise AssertionError('please check the punctuation in your {}'.format(name))
