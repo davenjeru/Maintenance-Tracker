@@ -1,3 +1,7 @@
+import datetime
+
+from .user_model import User
+
 requests_list = []
 
 
@@ -15,4 +19,22 @@ class RequestTransactionError(BaseException):
 
 
 class Request(object):
-    pass
+    """
+    This class handles the request object and all its functions.
+
+    :param: user -> a user object.
+    :param: request_type -> the type of request, either 'Maintenance' or 'Repair'
+    :param: title -> a short title that summarizes the object(s) being repaired or maintained
+    :param: description -> a brief description of what is supposed to be repaired or maintained
+    """
+    id = 1
+
+    def __init__(self, user: User, request_type: str, title: str, description: str):
+        self.id = Request.id
+        self.user_id = user.id
+        self.type = request_type
+        self.title = title
+        self.description = description
+        self.status = 'Pending Approval'
+        self.date_requested = datetime.datetime.now()
+        self.last_modified = None
