@@ -1,4 +1,5 @@
 import re
+import string
 
 from werkzeug.security import generate_password_hash, check_password_hash
 
@@ -31,6 +32,8 @@ class User(object):
         try:
             self._validate_user_details('email', email)
             self._validate_user_details('password', password)
+            self._validate_user_details('security question', security_question)
+            self._validate_user_details('security answer', security_answer)
         except AssertionError as a:
             raise UserTransactionError(a.args[0])
 
@@ -69,9 +72,13 @@ class User(object):
         """
         if self.security_question == security_question:
             if check_password_hash(self.security_answer, security_answer):
-                self.password_hash = generate_password_hash(new_password)
+                try:
+                    self._validate_user_details('password', new_password)
+                    self.password_hash = generate_password_hash(new_password)
+                except AssertionError as a:
+                    raise UserTransactionError(a.args[0])
             else:
-                raise UserTransactionError('wrong security answer!')
+                raise UserTransactionError('wrong security answer')
         else:
             raise UserTransactionError('wrong security question!')
 
@@ -83,11 +90,53 @@ class User(object):
         :param item: item to be validated
         """
 
+        def validate_security_question_or_answer(context: str, validation_item: str):
+
+            # set max and min length out here so that it will be easier to validate later
+            max_length, min_length = None, None
+
+            if context == 'security question':
+                max_length = 50
+                min_length = 10
+
+                # Check whether security question starts with 'Wh' or 'Are'
+                if validation_item[0] not in list('WwAa'):
+                    raise AssertionError('{} must start with a \'Wh\' or a \'Are\' question'.format(context))
+
+                # check whether security question ends with a question mark
+                if validation_item[-1] != '?':
+                    raise AssertionError('{} must end with a question mark \'?\''.format(context))
+
+                # make sure there are no punctuations in between
+                for char in list(validation_item[:-1]):
+                    if char in string.punctuation:
+                        raise AssertionError('{} must not contain any punctuations mid sentence'.format(context))
+
+            if context == 'security answer':
+                max_length = 20
+                min_length = 5
+
+                # security answer should not have any punctuations
+                for char in list(validation_item):
+                    if char in string.punctuation:
+                        raise AssertionError('{} must not contain any punctuations'.format(context))
+
+            # this is where length is checked to avoid checking twice
+            if len(validation_item) < min_length:
+                raise AssertionError('{0} is too short. Min of {1} characters'.format(context, min_length))
+            if len(validation_item) > max_length:
+                raise AssertionError('{0} too long. Max of {1} characters'.format(context, max_length))
+
+            # check for spacing issues
+            for word in validation_item.split(' '):
+                if not word:
+                    raise AssertionError('Please check the spacing on your {}'.format(context))
+
         email_pattern = re.compile(r"(^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$)")
         password_pattern = re.compile(
             r"(?=^.{12,80}$)(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^;*()_+}{:'?/.,])(?!.*\s).*$")
 
-        if not item:
+        if not item:  # this means that the function was called with the required parameter set as None
             raise AssertionError('missing \"{0}\" parameter'.format(name))
 
         if name == 'email':
@@ -96,6 +145,8 @@ class User(object):
         elif name == 'password':
             if not bool(password_pattern.match(item)):
                 raise AssertionError('password syntax is invalid')
+        elif name == 'security question' or name == 'security answer':
+            validate_security_question_or_answer(name, item)
 
 
 class Consumer(User):
