@@ -1,12 +1,13 @@
 import unittest
 
 from MaintenanceTrackerAPI.api.v1.models.request_model import Request, RequestTransactionError, requests_list
-from MaintenanceTrackerAPI.api.v1.models.user_model import Consumer, Admin
+from MaintenanceTrackerAPI.api.v1.models.user_model import Consumer, Admin, users_list
 
 
 class RequestTestCase(unittest.TestCase):
 
     def setUp(self):
+        users_list.clear()
         requests_list.clear()
         self.consumer = Consumer('consumer@company.com', 'password.Pa55word', 'What is your favourite company?',
                                  'company')
