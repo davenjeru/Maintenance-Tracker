@@ -41,9 +41,9 @@ class Request(object):
         except AssertionError as a:
             raise RequestTransactionError(a.args[0])
 
-        for post in requests_list:
-            if post.title == title and post.description == description:
-                raise RequestTransactionError('similar post exists')
+        for request in requests_list:
+            if request.title == title and request.description == description:
+                raise RequestTransactionError('similar request exists')
         # TODO check for the request status to allow re-submission of a request that has already been resolved/rejected
 
         self.id = Request.id
@@ -160,8 +160,47 @@ class Request(object):
         self.status = 'Cancelled'
         self.last_modified = datetime.datetime.now()
 
-    def edit(self):
-        pass
+    def edit(self, user: Consumer, details: dict):
+        # check the role of the user
+        self.__check_for_consumer(user, 'edit')
+
+        # check whether this request belongs to the user given
+        if user.id != self.user_id:
+            raise RequestTransactionError('this request does not belong to the selected user', 403)
+
+        # check the request status
+        if self.status != 'Pending Approval':
+            raise RequestTransactionError('cannot edit a request which is {}'.format(self.status))
+
+        title = details.get('title', None)
+        description = details.get('description', None)
+
+        try:
+            if title is not None:
+                self.__validate_request_details('title', title)
+            if description is not None:
+                self.__validate_request_details('description', description)
+        except AssertionError as e:
+            raise RequestTransactionError(e.args[0])
+
+        if title is not None:
+            if self.title == title:
+                name = 'title'
+                raise RequestTransactionError('{0} given matches the previous {0}'.format(name))
+        elif description is not None:
+            if self.description == description:
+                name = 'description'
+                raise RequestTransactionError('{0} given matches the previous {0}'.format(name))
+
+        for request in requests_list:
+            if description is not None and request.description == description:
+                raise RequestTransactionError('similar description exists')
+
+        self.title = title if title is not None else self.title
+        self.description = description if description is not None else self.description
+
+        self.last_modified = datetime.datetime.now()
+        return self
 
     def delete(self, user: Consumer):
         # check the role of the user
