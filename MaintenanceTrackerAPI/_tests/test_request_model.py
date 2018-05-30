@@ -13,6 +13,8 @@ class RequestTestCase(unittest.TestCase):
                                  'company')
         self.admin = Admin('admin@company.com', 'password.Pa55word', 'What is your favourite company?',
                            'company')
+        self.request = Request(self.consumer, 'Maintenance', 'Laptop Maintenance',
+                               'Keyboard cleaning and heat shield replacement')
 
     def test_consumer_makes_request(self):
         request = Request(self.consumer, 'Repair', 'Laptop Repair',
@@ -108,3 +110,63 @@ class RequestTestCase(unittest.TestCase):
                     'Water spilled onto my keyboard. I need it replaced')
             exception = a.exception
             self.assertEqual('similar request exists', exception.msg)
+
+    def test_admin_approves_request(self):
+        self.request.approve(self.admin)
+        self.assertEqual('Approved', self.request.status)
+
+    def test_admin_rejects_request(self):
+        self.request.reject(self.admin)
+        self.assertEqual('Rejected', self.request.status)
+
+    def test_admin_marks_request_in_progress(self):
+        self.request.in_progress(self.admin)
+        self.assertEqual('In Progress', self.request.status)
+
+    def test_admin_resolves_request(self):
+        self.request.resolve(self.admin)
+        self.assertEqual('Resolved', self.request.status)
+
+    def test_consumer_approves_request_fail(self):
+        with self.assertRaises(RequestTransactionError) as a:
+            self.request.approve(self.consumer)
+        exception = a.exception
+        self.assertEqual('Consumer not allowed to change request status', exception.msg)
+
+    def test_consumer_rejects_request_fail(self):
+        with self.assertRaises(RequestTransactionError) as a:
+            self.request.reject(self.consumer)
+        exception = a.exception
+        self.assertEqual('Consumer not allowed to change request status', exception.msg)
+
+    def test_consumer_marks_request_in_progress_fail(self):
+        with self.assertRaises(RequestTransactionError) as a:
+            self.request.in_progress(self.consumer)
+        exception = a.exception
+        self.assertEqual('Consumer not allowed to change request status', exception.msg)
+
+    def test_consumer_resolves_request_fail(self):
+        with self.assertRaises(RequestTransactionError) as a:
+            self.request.resolve(self.consumer)
+        exception = a.exception
+        self.assertEqual('Consumer not allowed to change request status', exception.msg)
+
+    def test_consumer_cancels_request(self):
+        self.request.cancel(self.consumer)
+        self.assertEqual('Cancelled', self.request.status)
+
+    def test_consumer_deletes_request(self):
+        self.request.delete(self.consumer)
+        self.assertNotIn(self.request, requests_list)
+
+    def test_admin_cancels_request_fail(self):
+        with self.assertRaises(RequestTransactionError) as a:
+            self.request.cancel(self.admin)
+        exception = a.exception
+        self.assertEqual('Administrator not allowed to cancel request', exception.msg)
+
+    def test_admin_deletes_request_fail(self):
+        with self.assertRaises(RequestTransactionError) as a:
+            self.request.delete(self.admin)
+        exception = a.exception
+        self.assertEqual('Administrator not allowed to delete request', exception.msg)
