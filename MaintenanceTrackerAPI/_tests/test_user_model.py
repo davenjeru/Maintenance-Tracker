@@ -62,9 +62,11 @@ class ModelsTestCase(unittest.TestCase):
         self.assertEqual('wrong security answer!', exception.msg)
 
     def test_create_admin_user_pass(self):
-        admin = Admin('email@com', 'password.Pa55word', 'What is your favourite company?', 'company')
+        admin = Admin('admin@company.com', 'password.Pa55word', 'What is your favourite company?',
+                      'company', "Administrator")
         self.assertEqual('Administrator', admin.role)
 
     def test_create_consumer_user_pass(self):
-        consumer = Consumer('email@com', 'password.Pa55word', 'What is your favourite company?', 'company')
+        consumer = Consumer('consumer@company.com', 'password.Pa55word', 'What is your favourite company?',
+                            'company', "Consumer")
         self.assertEqual('Consumer', consumer.role)
