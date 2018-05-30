@@ -107,4 +107,4 @@ class RequestTestCase(unittest.TestCase):
             Request(self.consumer, 'Repair', 'Laptop Repair',
                     'Water spilled onto my keyboard. I need it replaced')
             exception = a.exception
-            self.assertEqual('please check the punctuation in your description', exception.msg)
+            self.assertEqual('similar request exists', exception.msg)
