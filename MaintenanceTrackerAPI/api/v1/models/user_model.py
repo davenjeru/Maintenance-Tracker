@@ -160,10 +160,10 @@ class Consumer(User):
     - Delete requests
     """
 
-    def __init__(self, email: str, password: str, security_question: str, security_answer: str, role: str):
+    def __init__(self, email: str, password: str, security_question: str, security_answer: str):
         super().__init__(email, password, security_question, security_answer)
-        self.role = role
-        self.request_count = 0
+        self.__role = 'Consumer'
+        self.__request_count = 0
 
 
 class Admin(User):
