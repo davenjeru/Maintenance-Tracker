@@ -40,6 +40,13 @@ class RequestTestCase(unittest.TestCase):
         exception = a.exception
         self.assertEqual('title too short. Min of 10 characters allowed', exception.msg)
 
+    def test_make_request_with_long_title(self):
+        with self.assertRaises(RequestTransactionError) as a:
+            Request(self.consumer, 'Repair', 'Dokokara mitemo itsumademo syle mo ginsei sutekidayo ishoukillin it fuan',
+                    'Water spilled onto my keyboard. I need it replaced')
+        exception = a.exception
+        self.assertEqual('title too long. Max of 70 characters allowed', exception.msg)
+
     def test_make_request_with_wrong_spacing_title(self):
         with self.assertRaises(RequestTransactionError) as a:
             Request(self.consumer, 'Repair', 'X                     X',
@@ -67,6 +74,17 @@ class RequestTestCase(unittest.TestCase):
                     'W')
         exception = a.exception
         self.assertEqual('description too short. Min of 40 characters allowed', exception.msg)
+
+    def test_make_request_with_long_description(self):
+        with self.assertRaises(RequestTransactionError) as a:
+            Request(self.consumer, 'Repair', 'Laptop Repair',
+                    'Water spilled onto my keyboard. I need it replacedWatspilled onto my keyboard. I need it replace'
+                    'Water spilled onto my keyboard. I need it replacedWater sped onto my keyboard. I need it replaced'
+                    'Water spilled onto my keyboard. I need it replacedWater spilled onto my keyboard. I need it replac'
+                    'Water spilled onto my keyboard. I need it replacedWater spilled onto my keyboard. I need it replac'
+                    'Water spilled onto my keyboard. I need it replaced')
+        exception = a.exception
+        self.assertEqual('description too long. Max of 250 characters allowed', exception.msg)
 
     def test_make_request_with_wrong_spacing_description(self):
         with self.assertRaises(RequestTransactionError) as a:
