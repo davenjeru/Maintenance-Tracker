@@ -128,7 +128,7 @@ class Request(object):
         self.status = 'Rejected'
         self.last_modified = datetime.datetime.now()
 
-    def in_progress(self, user):
+    def in_progress(self, user: Admin):
         # check the role of the user
         self.__check_for_admin(user)
 
@@ -139,7 +139,7 @@ class Request(object):
         self.status = 'In Progress'
         self.last_modified = datetime.datetime.now()
 
-    def resolve(self, user):
+    def resolve(self, user: Admin):
         self.__check_for_admin(user)
 
         # check the status of the request
@@ -149,8 +149,16 @@ class Request(object):
         self.status = 'Resolved'
         self.last_modified = datetime.datetime.now()
 
-    def cancel(self):
-        pass
+    def cancel(self, user: Consumer):
+        # check the role of the user
+        self.__check_for_consumer(user)
+
+        # check the status of the request
+        if self.status != 'Pending Approval':
+            raise RequestTransactionError('cannot cancel a request which is {}'.format(self.status))
+
+        self.status = 'Cancelled'
+        self.last_modified = datetime.datetime.now()
 
     def edit(self):
         pass
@@ -162,3 +170,8 @@ class Request(object):
     def __check_for_admin(user):
         if user.role != 'Administrator':
             raise RequestTransactionError('{} not allowed to change request status'.format(user.role))
+
+    @staticmethod
+    def __check_for_consumer(user):
+        if user.role != 'Consumer':
+            raise RequestTransactionError('{} not allowed to cancel request'.format(user.role))
