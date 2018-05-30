@@ -117,8 +117,16 @@ class Request(object):
         self.status = 'Approved'
         self.last_modified = datetime.datetime.now()
 
-    def reject(self):
-        pass
+    def reject(self, user: Admin):
+        # check the role of the user
+        self.__check_for_admin(user)
+
+        # check the status of the request
+        if self.status != 'Pending Approval':
+            raise RequestTransactionError('cannot approve a request which is {}'.format(self.status))
+
+        self.status = 'Rejected'
+        self.last_modified = datetime.datetime.now()
 
     def in_progress(self):
         pass
