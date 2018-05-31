@@ -35,6 +35,10 @@ class Request(object):
         if user.role != 'Consumer':
             raise RequestTransactionError('Administrators cannot make requests!', 403)
 
+        types_list = ['Maintenance', 'Repair']
+        if bool(request_type) and request_type not in types_list:
+            raise RequestTransactionError('Cannot recognize the request type given :{}'.format(request_type))
+
         try:
             self.__validate_request_details('title', title)
             self.__validate_request_details('description', description)
@@ -48,7 +52,7 @@ class Request(object):
 
         self.id = Request.id
         self.user_id = user.id
-        self.type = request_type
+        self.type = request_type if (bool(request_type)) else 'Repair'
         self.title = title
         self.description = description
         self.status = 'Pending Approval'
