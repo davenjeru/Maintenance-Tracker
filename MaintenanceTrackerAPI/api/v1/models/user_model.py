@@ -52,6 +52,7 @@ class User(UserMixin):
     def __save(self):
         """
         Stores user in the users list
+        Increase the user id by one
         """
         User.id += 1
         users_list.append(self)
@@ -182,23 +183,19 @@ class Consumer(User):
 
     @property
     def role(self):
+        """
+        :return: private class attribute __role
+        :rtype: str
+        """
         return self.__role
 
     @property
     def serialize(self):
+        """
+        :rtype: dict
+        :return: a dictionary containing the user details
+        """
         return dict(email=self.email, role=self.role)
-
-    def make_request(self):
-        pass
-
-    def edit_request(self):
-        pass
-
-    def get_my_requests(self):
-        pass
-
-    def delete_request(self):
-        pass
 
 
 class Admin(User):
@@ -220,10 +217,8 @@ class Admin(User):
 
     @property
     def serialize(self):
+        """
+        :rtype: dict
+        :return: a dictionary containing the user details
+        """
         return dict(email=self.email, role=self.role)
-
-    def get_all_requests(self):
-        pass
-
-    def update_request_status(self):
-        pass
