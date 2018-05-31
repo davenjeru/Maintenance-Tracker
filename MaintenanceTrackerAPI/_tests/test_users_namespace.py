@@ -239,12 +239,41 @@ class EditRequestTestCase(UsersNamespaceTestCase):
 
     def test_login_required(self):
         """
-        Test that login is required to access this rout
+        Test that login is required to access this route
         :return: None
         """
         data = dict()
         response = self.edit_request(data, self.consumer.id, self.request.id)
         self.assert401(response)
+        response = self.client.get(api_v1.url_for(SingleUserSingleRequest, user_id=1, request_id=1))
+        self.assert401(response)
+
+    def test_get_one_request(self):
+        """
+        Test that one can view a single request
+        :return: None
+        """
+        # login
+        data = dict(email='consumer@company.com', password='password.Pa55word')
+        self.login(data)
+
+        response = self.client.get(api_v1.url_for(SingleUserSingleRequest,
+                                                  user_id=self.consumer.id, request_id=self.request.id))
+        self.assertIn(b'Laptop Repair', response.data)
+
+    def test_request_not_found(self):
+        """
+        Test that one can view a single request
+        :return: None
+        """
+        # login
+        data = dict(email='consumer@company.com', password='password.Pa55word')
+        self.login(data)
+
+        response = self.client.get(api_v1.url_for(SingleUserSingleRequest,
+                                                  user_id=self.consumer.id, request_id=20 ** 3))
+        self.assert404(response)
+
 
     def test_consumer_can_edit_request(self):
         """
