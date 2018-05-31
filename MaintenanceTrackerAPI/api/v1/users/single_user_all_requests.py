@@ -25,6 +25,7 @@ class SingleUserAllRequests(Resource):
         pass
 
     @login_required
+    @users_ns.expect(request_model)
     @users_ns.response(201, 'Request made successfully')
     @users_ns.response(400, 'Bad request')
     @users_ns.response(401, 'Not logged in hence unauthorized')
