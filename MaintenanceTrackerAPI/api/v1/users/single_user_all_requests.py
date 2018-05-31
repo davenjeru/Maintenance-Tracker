@@ -20,9 +20,31 @@ request_model = users_ns.model('request_model', {
 
 
 class SingleUserAllRequests(Resource):
-
+    @login_required
+    @users_ns.response(200, "Success")
+    @users_ns.response(401, "You are not logged in hence unauthorized")
+    @users_ns.response(403, "You are logged in but you are not allowed to access this endpoint")
     def get(self, user_id: int):
-        pass
+        """
+        View all requests from a single user
+        """
+        # abort with 403 if the user is not an administrator or the id
+        # stored in the session is not equal to the id in the route
+        if current_user.id != user_id and current_user.role != 'Administrator':
+            users_ns.abort(403)
+
+        if current_user.id == user_id and current_user.role == 'Administrator':
+            users_ns.abort(400, 'Administrators do not have requests')
+        this_user = None
+        try:
+            this_user = check_id_availability(user_id, users_list, str(User.__name__))
+        except PayloadExtractionError as e:
+            users_ns.abort(e.abort_code, e.msg)
+        my_requests_list = [request for request in requests_list if request.user_id == this_user.id]
+        my_requests_list_output = []
+        for a_request in my_requests_list:
+            my_requests_list_output.append(a_request.serialize)
+        return dict(requests=my_requests_list_output)
 
     @login_required
     @users_ns.expect(request_model)

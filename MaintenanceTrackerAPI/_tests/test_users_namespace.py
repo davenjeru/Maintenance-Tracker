@@ -2,7 +2,7 @@ from flask_testing import TestCase
 
 from MaintenanceTrackerAPI import create_app as create
 from MaintenanceTrackerAPI.api.v1 import api_v1
-from MaintenanceTrackerAPI.api.v1.auth import Login
+from MaintenanceTrackerAPI.api.v1.auth import Login, Logout
 from MaintenanceTrackerAPI.api.v1.models.request_model import requests_list
 from MaintenanceTrackerAPI.api.v1.models.user_model import Admin, Consumer, users_list
 from MaintenanceTrackerAPI.api.v1.users.single_user_all_requests import SingleUserAllRequests
@@ -36,8 +36,57 @@ class UsersNamespaceTestCase(TestCase):
 class GetRequestsTestCase(UsersNamespaceTestCase):
 
     def test_endpoint_is_defined(self):
+        self.client.get(api_v1.url_for(SingleUserAllRequests, user_id=1))
+
+    def check_login_is_requires(self):
         response = self.client.get(api_v1.url_for(SingleUserAllRequests, user_id=1))
-        self.assert200(response)
+        self.assert401(response)
+
+    def test_get_all_requests_empty_list(self):
+        data = dict(email='consumer@company.com', password='password.Pa55word')
+        self.login(data)
+        response = self.client.get(api_v1.url_for(SingleUserAllRequests, user_id=self.consumer.id))
+        self.assertIn(b'[]', response.data)
+
+    def test_get_all_requests(self):
+        # log the consumer in
+        data = dict(email='consumer@company.com', password='password.Pa55word')
+        self.login(data)
+
+        # let the user make a request
+        data = dict(request_type='Repair', title='Laptop Repair',
+                    description='My laptop fell in water. The screen is black but I can hear sound')
+        self.make_request(data, self.consumer.id)
+
+        # let the user make another request
+        data['title'] = 'Phone Repair'
+        data['description'] = 'My phone screen has been destroyed. The screen itself and not the top glass'
+        self.make_request(data, self.consumer.id)
+
+        # check the response when a GET request is made
+        response = self.client.get(api_v1.url_for(SingleUserAllRequests, user_id=self.consumer.id))
+        self.assertIn(b'Phone Repair', response.data)
+        self.assertIn(b'Laptop Repair', response.data)
+
+        # logout the consumer
+        self.client.post(api_v1.url_for(Logout))
+
+        # log the admin in
+        data = dict(email='admin@company.com', password='password.Pa55word')
+        self.login(data)
+
+        # check the response when a GET request is made
+        response = self.client.get(api_v1.url_for(SingleUserAllRequests, user_id=self.consumer.id))
+        self.assertIn(b'Phone Repair', response.data)
+        self.assertIn(b'Laptop Repair', response.data)
+
+    def test_user_cannot_view_another_users_request(self):
+        another_consumer = Consumer('consumer2@company.com', 'password.Pa55word', 'What is your favourite company?',
+                                    'company')
+        data = dict(email='consumer@company.com', password='password.Pa55word')
+        self.login(data)
+        response = self.client.get(api_v1.url_for(SingleUserAllRequests, user_id=another_consumer.id))
+        self.assert403(response)
 
 
 class MakeRequestsTestCase(UsersNamespaceTestCase):
