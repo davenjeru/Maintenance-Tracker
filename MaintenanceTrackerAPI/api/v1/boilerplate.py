@@ -46,7 +46,6 @@ def extract_from_payload(payload: dict, list_of_contexts: list):
     return_list = []
     for name in list_of_contexts:
         if payload.get(name) is None and (name != 'role' and name != 'request_type'):
-            print(name)
             raise PayloadExtractionError('missing \'{}\' parameter'.format(name), 400)
         return_list.append(payload.get(name, None))
 
