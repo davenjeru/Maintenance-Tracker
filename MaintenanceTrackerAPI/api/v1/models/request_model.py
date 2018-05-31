@@ -54,6 +54,7 @@ class Request(object):
         self.status = 'Pending Approval'
         self.date_requested = datetime.datetime.now()
         self.last_modified = None
+        self.__requested_by = user.email
         self.__save()
 
     def __save(self):
@@ -213,6 +214,16 @@ class Request(object):
         requests_list.remove(self)
         del self
         return True
+
+    @property
+    def serialize(self):
+        return dict(requested_by=self.requested_by, request_type=self.type, title=self.title,
+                    description=self.description, date_requestsed=str(self.date_requested), status=self.status,
+                    last_modified=str(self.last_modified))
+
+    @property
+    def requested_by(self):
+        return self.__requested_by
 
     @staticmethod
     def __check_for_admin(user):
