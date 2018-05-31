@@ -35,6 +35,10 @@ class Request(object):
         if user.role != 'Consumer':
             raise RequestTransactionError('Administrators cannot make requests!', 403)
 
+        types_list = ['Maintenance', 'Repair']
+        if bool(request_type) and request_type not in types_list:
+            raise RequestTransactionError('Cannot recognize the request type given :{}'.format(request_type))
+
         try:
             self.__validate_request_details('title', title)
             self.__validate_request_details('description', description)
@@ -48,12 +52,13 @@ class Request(object):
 
         self.id = Request.id
         self.user_id = user.id
-        self.type = request_type
+        self.type = request_type if (bool(request_type)) else 'Repair'
         self.title = title
         self.description = description
         self.status = 'Pending Approval'
         self.date_requested = datetime.datetime.now()
         self.last_modified = None
+        self.__requested_by = user.email
         self.__save()
 
     def __save(self):
@@ -213,6 +218,16 @@ class Request(object):
         requests_list.remove(self)
         del self
         return True
+
+    @property
+    def serialize(self):
+        return dict(requested_by=self.requested_by, request_type=self.type, title=self.title,
+                    description=self.description, date_requestsed=str(self.date_requested), status=self.status,
+                    last_modified=str(self.last_modified))
+
+    @property
+    def requested_by(self):
+        return self.__requested_by
 
     @staticmethod
     def __check_for_admin(user):

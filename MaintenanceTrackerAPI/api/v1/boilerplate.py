@@ -2,6 +2,7 @@ from flask import url_for, request
 from flask_restplus import Resource
 from werkzeug.exceptions import BadRequest
 
+from MaintenanceTrackerAPI.api.v1.models.request_model import Request
 from MaintenanceTrackerAPI.api.v1.models.user_model import User
 
 
@@ -44,7 +45,8 @@ def extract_from_payload(payload: dict, list_of_contexts: list):
     """
     return_list = []
     for name in list_of_contexts:
-        if payload.get(name) is None and name != 'role':
+        if payload.get(name) is None and (name != 'role' and name != 'request_type'):
+            print(name)
             raise PayloadExtractionError('missing \'{}\' parameter'.format(name), 400)
         return_list.append(payload.get(name, None))
 
@@ -97,3 +99,36 @@ def check_id_availability(the_id: int, a_list: list, context: str):
             return an_item
     else:
         raise PayloadExtractionError('{0} not found!'.format(context))
+
+
+def safe_request_output(resource: Resource, the_request: Request):
+    """
+    Creates a dictionary of Request details
+    :param resource:
+    :param the_request:
+    :return: dict
+    """
+    api = resource.api
+    request_dict = the_request.serialize
+    return request_dict
+
+
+def generate_request_output(resource: Resource, the_request: Request, method: str):
+    """
+    Generates output specific to the users namespace
+    :param resource: The resource that called this function
+    :param the_request: The request whose output should be generated
+    :param method: The HTTP method
+    :return: The output dictionary specific to the resource that called this function
+    :rtype: dict
+    """
+    output_dict = dict(request=safe_request_output(resource, the_request))
+
+    if resource.endpoint == 'users_single_user_all_requests':
+        if method == 'post':
+            output_dict['message'] = 'request created successfully'
+    elif resource.endpoint == 'users_single_user_single_request':
+        if method == 'patch':
+            output_dict['message'] = 'request modified successfully'
+
+    return output_dict
