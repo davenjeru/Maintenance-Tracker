@@ -48,22 +48,22 @@ class SingleUserAllRequests(Resource):
         if current_user.id != user_id:
             users_ns.abort(403)
 
-        title, body, request_type = None, None, None
+        title, description, request_type = None, None, None
 
         try:
             payload = get_validated_payload(self)
             list_of_names = ['request_type', 'title', 'description']
-            request_type, title, body = extract_from_payload(payload, list_of_names)
+            request_type, title, description = extract_from_payload(payload, list_of_names)
         except PayloadExtractionError as e:
             users_ns.abort(e.abort_code, e.msg)
 
         for a_request in requests_list:
-            if a_request.title == title and a_request.body == body:
+            if a_request.title == title and a_request.description == description:
                 users_ns.abort(400, 'request already exists')
 
         request = None
         try:
-            request = Request(current_user, request_type, title, body)
+            request = Request(current_user, request_type, title, description)
         except RequestTransactionError as e:
             users_ns.abort(e.abort_code, e.msg)
         output = generate_request_output(self, request, 'post')
