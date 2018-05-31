@@ -1,6 +1,8 @@
 from flask_testing import TestCase
 
 from MaintenanceTrackerAPI import create_app as create
+from MaintenanceTrackerAPI.api.v1 import api_v1
+from MaintenanceTrackerAPI.api.v1.auth import Register
 
 
 class AppTestCase(TestCase):
@@ -31,10 +33,12 @@ class AppTestCase(TestCase):
         self.assertEqual(400, response.status_code)
         self.assertIn(b'no data was found in the request', response.data)
 
-    def register(self, email: str = None, password_tuple: tuple = (None, None), security_tuple: tuple = (None, None)):
+    def register(self, email: str = None, password_tuple: tuple = (None, None),
+                 security_tuple: tuple = (None, None), role=None):
         data = dict(email=email)
         data['password'], data['confirm_password'] = password_tuple
         data['security_question'], data['security_answer'] = security_tuple
+        data['role'] = role
         return self.client.post(api_v1.url_for(Register), data=str(data), content_type='application/json')
 
     def test_a1_consumer_register_pass(self):
@@ -43,7 +47,7 @@ class AppTestCase(TestCase):
 
         response = self.register('consumer@company.com', password_tuple, security_tuple)
         self.assertEqual(201, response.status_code)
-        self.assertEqual(b'Consumer', response.data)
+        self.assertIn(b'Consumer', response.data)
         self.assertIn(b'user registered successfully', response.data)
         response = self.register('consumer@company.com', password_tuple, security_tuple)
         self.assertIn(b'user with similar email exists', response.data)
@@ -53,9 +57,9 @@ class AppTestCase(TestCase):
         password_tuple = ('password.Pa55word', 'password.Pa55word')
         security_tuple = ('What is your favourite company?', 'company')
 
-        response = self.register('admin@company.com', password_tuple, security_tuple)
+        response = self.register('admin@company.com', password_tuple, security_tuple, role='Administrator')
         self.assertEqual(201, response.status_code)
-        self.assertEqual(b'Consumer', response.data)
+        self.assertIn(b'Admin', response.data)
         self.assertIn(b'user registered successfully', response.data)
         response = self.register('admin@company.com', password_tuple, security_tuple)
         self.assertIn(b'user with similar email exists', response.data)
