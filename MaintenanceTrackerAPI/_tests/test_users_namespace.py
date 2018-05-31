@@ -45,7 +45,7 @@ class GetRequestsTestCase(UsersNamespaceTestCase):
     def test_get_all_requests_empty_list(self):
         data = dict(email='consumer@company.com', password='password.Pa55word')
         self.login(data)
-        response = self.client.get(api_v1.url_for(SingleUserAllRequests, user_id=1))
+        response = self.client.get(api_v1.url_for(SingleUserAllRequests, user_id=self.consumer.id))
         self.assertIn(b'[]', response.data)
 
     def test_get_all_requests(self):
@@ -60,11 +60,11 @@ class GetRequestsTestCase(UsersNamespaceTestCase):
 
         # let the user make another request
         data['title'] = 'Phone Repair'
-        data['description'] = 'My phone screen has been destroyed'
+        data['description'] = 'My phone screen has been destroyed. The screen itself and not the top glass'
         self.make_request(data, self.consumer.id)
 
         # check the response when a GET request is made
-        response = self.client.get(api_v1.url_for(SingleUserAllRequests, user_id=1))
+        response = self.client.get(api_v1.url_for(SingleUserAllRequests, user_id=self.consumer.id))
         self.assertIn(b'Phone Repair', response.data)
         self.assertIn(b'Laptop Repair', response.data)
 
@@ -76,7 +76,7 @@ class GetRequestsTestCase(UsersNamespaceTestCase):
         self.login(data)
 
         # check the response when a GET request is made
-        response = self.client.get(api_v1.url_for(SingleUserAllRequests, user_id=1))
+        response = self.client.get(api_v1.url_for(SingleUserAllRequests, user_id=self.consumer.id))
         self.assertIn(b'Phone Repair', response.data)
         self.assertIn(b'Laptop Repair', response.data)
 
