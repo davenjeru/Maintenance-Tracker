@@ -2,7 +2,7 @@ from flask_testing import TestCase
 
 from MaintenanceTrackerAPI import create_app as create
 from MaintenanceTrackerAPI.api.v1 import api_v1
-from MaintenanceTrackerAPI.api.v1.auth import Register
+from MaintenanceTrackerAPI.api.v1.auth import Register, Logout
 from MaintenanceTrackerAPI.api.v1.auth.login import Login
 
 
