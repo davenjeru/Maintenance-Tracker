@@ -6,6 +6,7 @@ class Config(object):
 class Development(Config):
     """ Development Configurations"""
     DEBUG = True
+    SECRET_KEY = 'developmentsecretkey'
 
 
 class Production(Config):
@@ -16,6 +17,7 @@ class Production(Config):
 class Testing(Config):
     TESTING = True
     DEBUG = True
+    SECRET_KEY = 'testingsecretkey'
 
 
 class Staging(Config):

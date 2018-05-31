@@ -1,6 +1,7 @@
 import re
 import string
 
+from flask_login import UserMixin
 from werkzeug.security import generate_password_hash, check_password_hash
 
 users_list = []
@@ -19,7 +20,7 @@ class UserTransactionError(BaseException):
         self.abort_code = abort_code
 
 
-class User(object):
+class User(UserMixin):
     """
         This is the user class.
         Defines a user and all actions that can be done by it.
@@ -54,6 +55,12 @@ class User(object):
         """
         User.id += 1
         users_list.append(self)
+
+    def get_id(self):
+        """
+        Returns unicode user ID for use by Flask-Login
+        """
+        return chr(self.id)
 
     def authenticate(self, password: str):
         """
@@ -148,6 +155,14 @@ class User(object):
         elif name == 'security question' or name == 'security answer':
             validate_security_question_or_answer(name, item)
 
+    @property
+    def serialize(self):
+        return {'email': self.email}
+
+    @property
+    def __name__(self):
+        return self.__class__.__name__
+
 
 class Consumer(User):
     """
@@ -168,6 +183,10 @@ class Consumer(User):
     @property
     def role(self):
         return self.__role
+
+    @property
+    def serialize(self):
+        return dict(email=self.email, role=self.role)
 
     def make_request(self):
         pass
@@ -198,6 +217,10 @@ class Admin(User):
     @property
     def role(self):
         return self.__role
+
+    @property
+    def serialize(self):
+        return dict(email=self.email, role=self.role)
 
     def get_all_requests(self):
         pass
