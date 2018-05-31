@@ -101,7 +101,7 @@ def check_id_availability(the_id: int, a_list: list, context: str):
         if an_item.id == the_id:
             return an_item
     else:
-        raise PayloadExtractionError('{0} not found!'.format(context))
+        raise PayloadExtractionError('{0} not found!'.format(context), 404)
 
 
 def safe_request_output(resource: Resource, the_request: Request):
