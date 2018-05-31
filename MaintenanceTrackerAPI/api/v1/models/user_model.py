@@ -148,6 +148,14 @@ class User(object):
         elif name == 'security question' or name == 'security answer':
             validate_security_question_or_answer(name, item)
 
+    @property
+    def serialize(self):
+        return {'email': self.email}
+
+    @property
+    def __name__(self):
+        return self.__class__.__name__
+
 
 class Consumer(User):
     """
@@ -168,6 +176,10 @@ class Consumer(User):
     @property
     def role(self):
         return self.__role
+
+    @property
+    def serialize(self):
+        return dict(email=self.email, role=self.role)
 
     def make_request(self):
         pass
@@ -198,6 +210,10 @@ class Admin(User):
     @property
     def role(self):
         return self.__role
+
+    @property
+    def serialize(self):
+        return dict(email=self.email, role=self.role)
 
     def get_all_requests(self):
         pass
