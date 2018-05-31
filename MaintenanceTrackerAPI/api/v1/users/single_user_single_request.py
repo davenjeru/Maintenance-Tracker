@@ -33,14 +33,9 @@ class SingleUserSingleRequest(Resource):
 
         for request in requests_list:
             if request.user_id == user_id and request.id == request_id:
-                output = None
-                try:
-                    output = dict(request=safe_request_output(self,
-                                                              check_id_availability(request_id,
-                                                                                    requests_list,
-                                                                                    str(Request.__name__))))
-                    return output
-                except PayloadExtractionError as e:
-                    users_ns.abort(e.abort_code, e.msg)
+                output = dict(request=safe_request_output(self,
+                                                          check_id_availability(request_id, requests_list,
+                                                                                str(Request.__name__))))
+                return output
         else:
             users_ns.abort(400, 'the requested user does not own this request')

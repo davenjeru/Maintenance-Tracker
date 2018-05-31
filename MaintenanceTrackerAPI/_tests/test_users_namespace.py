@@ -261,6 +261,21 @@ class EditRequestTestCase(UsersNamespaceTestCase):
                                                   user_id=self.consumer.id, request_id=self.request.id))
         self.assertIn(b'Laptop Repair', response.data)
 
+    def test_user_get_request(self):
+        """
+        Test that a user cannot view another user's request
+        :return: None
+        """
+        # register
+        Consumer('consumer2@company.com', 'password.Pa55word', 'What is your favourite company?',
+                 'company')
+        data = dict(email='consumer2@company.com', password='password.Pa55word')
+        self.login(data)
+
+        response = self.client.get(api_v1.url_for(SingleUserSingleRequest,
+                                                  user_id=self.consumer.id, request_id=self.request.id))
+        self.assert403(response)
+
     def test_request_not_found(self):
         """
         Test that one can view a single request
@@ -273,7 +288,6 @@ class EditRequestTestCase(UsersNamespaceTestCase):
         response = self.client.get(api_v1.url_for(SingleUserSingleRequest,
                                                   user_id=self.consumer.id, request_id=20 ** 3))
         self.assert404(response)
-
 
     def test_consumer_can_edit_request(self):
         """
