@@ -77,3 +77,19 @@ class MakeRequestsTestCase(UsersNamespaceTestCase):
                     description='My laptop fell in water. The screen is black but I can hear sound;\'')
         response = self.make_request(data, self.consumer.id)
         self.assertEqual(400, response.status_code)
+
+    def test_consumer_makes_request_with_invalid_request_type(self):
+        data = dict(email='consumer@company.com', password='password.Pa55word')
+        self.login(data)
+        data = dict(request_type='Another Type', title='Laptop Repair',
+                    description='My laptop fell in water. The screen is black but I can hear sound.')
+        response = self.make_request(data, self.consumer.id)
+        self.assertIn(b'Cannot recognize the request type given :', response.data)
+
+    def test_consumer_makes_request_with_none_request_type(self):
+        data = dict(email='consumer@company.com', password='password.Pa55word')
+        self.login(data)
+        data = dict(request_type=None, title='Laptop Repair',
+                    description='My laptop fell in water. The screen is black but I can hear sound.')
+        response = self.make_request(data, self.consumer.id)
+        self.assertEqual(201, response.status_code)
