@@ -20,6 +20,11 @@ user_login_model = auth_ns.model('user_login_model', {
 
 @login_manager.user_loader
 def load_user(user_id):
+    """
+    This is the method used by Flask-Login to load a user using the user id
+    :param user_id: the user's id
+    :return: User object
+    """
     for a_user in users_list:
         # In the session, user_id is stored as a unicode character
         # The chr() converts the int id of the user found to unicode for comparing equality
