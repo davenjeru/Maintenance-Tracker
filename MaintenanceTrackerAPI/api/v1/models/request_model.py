@@ -62,6 +62,10 @@ class Request(object):
         self.__save()
 
     def __save(self):
+        """
+        Saves the instance by adding it to a list and increases the id by one
+        :return:
+        """
         Request.id += 1
         requests_list.append(self)
 
@@ -111,6 +115,12 @@ class Request(object):
                         raise AssertionError('please check the punctuation in your {}'.format(name))
 
     def approve(self, user: Admin):
+        """
+        For changing the request status to 'Approved'
+        This can only be done to a request whose status is 'Pending Approval'
+        :param user: An Admin User object
+        :return: None
+        """
 
         # check the role of the user
         self.__check_for_admin(user)
@@ -123,6 +133,13 @@ class Request(object):
         self.last_modified = datetime.datetime.now()
 
     def reject(self, user: Admin):
+        """
+        For changing the request status to 'Rejected'
+        This can only be done to a request whose status is 'Pending Approval'
+        :param user: An Admin User object
+        :return: None
+        """
+
         # check the role of the user
         self.__check_for_admin(user)
 
@@ -134,6 +151,13 @@ class Request(object):
         self.last_modified = datetime.datetime.now()
 
     def in_progress(self, user: Admin):
+        """
+        For changing the request status to 'In Progress'
+        This can only be done to a request whose status is 'Approved'
+        :param user: An Admin User object
+        :return: None
+        """
+
         # check the role of the user
         self.__check_for_admin(user)
 
@@ -145,6 +169,13 @@ class Request(object):
         self.last_modified = datetime.datetime.now()
 
     def resolve(self, user: Admin):
+        """
+        For changing the request status to 'Resolved'
+        This can only be done to a request whose status is 'In Progress'
+        :param user: An Admin User object
+        :return: None
+        """
+
         self.__check_for_admin(user)
 
         # check the status of the request
@@ -155,6 +186,13 @@ class Request(object):
         self.last_modified = datetime.datetime.now()
 
     def cancel(self, user: Consumer):
+        """
+        For changing the request status to 'Cancelled'
+        This can only be done to a request whose status is 'Pending Approval'
+        :param user: A Consumer User object
+        :return: None
+        """
+
         # check the role of the user
         self.__check_for_consumer(user, 'cancel')
 
@@ -166,6 +204,12 @@ class Request(object):
         self.last_modified = datetime.datetime.now()
 
     def edit(self, user: Consumer, details: dict):
+        """
+        Method used by a consumer to edit a request
+        :param user: A Consumer User object
+        :param details: A dictionary containing the details to be changed
+        :return:
+        """
         # check the role of the user
         self.__check_for_consumer(user, 'edit')
 
@@ -208,6 +252,11 @@ class Request(object):
         return self
 
     def delete(self, user: Consumer):
+        """
+        Method used by Consumer to delete a request
+        :param user: Consumer User Object
+        :return: None
+        """
         # check the role of the user
         self.__check_for_consumer(user, 'delete')
 
@@ -221,20 +270,39 @@ class Request(object):
 
     @property
     def serialize(self):
+        """
+        :rtype: dict
+        :return: a dictionary containing the request details
+        """
         return dict(requested_by=self.requested_by, request_type=self.type, title=self.title,
                     description=self.description, date_requestsed=str(self.date_requested), status=self.status,
                     last_modified=str(self.last_modified))
 
     @property
     def requested_by(self):
+        """
+        :rtype: str
+        :return: The email address of the consumer who made the request
+        """
         return self.__requested_by
 
     @staticmethod
     def __check_for_admin(user):
+        """
+        Private method for checking if the given user is an Administrator
+        :param user: User Object
+        :return: None
+        """
         if user.role != 'Administrator':
             raise RequestTransactionError('{} not allowed to change request status'.format(user.role))
 
     @staticmethod
     def __check_for_consumer(user, context: str):
+        """
+        Private method for checking if the given user is an Consumer
+        :param user: User object
+        :param context: The action that the user is trying to do
+        :return:
+        """
         if user.role != 'Consumer':
             raise RequestTransactionError('{0} not allowed to {1} request'.format(user.role, context))

@@ -7,6 +7,12 @@ from instance.config import app_config
 
 # create app
 def create_app(config_name):
+    """
+    Class for creating the flask app using different configurations
+    :param config_name:
+    :return: The created flask app
+    :rtype: Flask
+    """
     # initiate app
     app = Flask(__name__, instance_relative_config=True)
 

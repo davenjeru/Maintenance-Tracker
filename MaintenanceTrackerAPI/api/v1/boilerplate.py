@@ -7,6 +7,9 @@ from MaintenanceTrackerAPI.api.v1.models.user_model import User
 
 
 class PayloadExtractionError(BaseException):
+    """
+    Custom exception that will be raised if there is an error during payload extraction
+    """
     def __init__(self, msg: str, abort_code: int = 400):
         self.msg = msg
         self.abort_code = abort_code
@@ -42,6 +45,7 @@ def extract_from_payload(payload: dict, list_of_contexts: list):
     :param payload:
     :param list_of_contexts:
     :return: tuple of the items that were extracted
+    :rtype: dict
     """
     return_list = []
     for name in list_of_contexts:
