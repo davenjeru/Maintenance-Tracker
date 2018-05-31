@@ -17,6 +17,7 @@ class Production(Config):
 class Testing(Config):
     TESTING = True
     DEBUG = True
+    SECRET_KEY = 'testingsecretkey'
 
 
 class Staging(Config):
