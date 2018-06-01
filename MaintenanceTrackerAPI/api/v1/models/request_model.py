@@ -274,6 +274,9 @@ class Request(object):
         self.description = description if description is not None \
             else self.description
 
+        if not title and not description:
+            raise RequestTransactionError('could not edit request, please '
+                                          'insert title or description')
         self.last_modified = datetime.datetime.now()
         return self
 
