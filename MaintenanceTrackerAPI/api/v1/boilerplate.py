@@ -8,7 +8,8 @@ from MaintenanceTrackerAPI.api.v1.models.user_model import User
 
 class PayloadExtractionError(BaseException):
     """
-    Custom exception that will be raised if there is an error during payload extraction
+    Custom exception that will be raised if there is an error
+    during payload extraction
     """
     def __init__(self, msg: str, abort_code: int = 400):
         self.msg = msg
@@ -26,14 +27,16 @@ def get_validated_payload(resource: Resource):
     if request.content_type != 'application/json':  # check whether the request body is in JSON format
         raise PayloadExtractionError('request data should be in json format', 415)
     try:
-        # in the tests, request body is sent as string so we have to eval the body to dict
+        # in the tests, request body is sent as string so we have to eval the
+        #  body to dict
         payload = eval(resource.api.payload) if type(resource.api.payload) == str else resource.api.payload
     except BadRequest:
-        # if an error is caught as a bad request, try and get the data from request.data if its there
+        # if an error is caught as a bad request, try and get the data from
+        # request.data if its there
         payload = eval(request.data) if bool(request.data) else None
 
-    # All the above checks have not given a payload so the only explanation is that there is none
-    # hence return a 400
+    # All the above checks have not given a payload so the only explanation
+    # is that there is none hence return a 400
     if payload is None:
         raise PayloadExtractionError('no data was found in the request', 400)
     return payload
@@ -41,7 +44,8 @@ def get_validated_payload(resource: Resource):
 
 def extract_from_payload(payload: dict, list_of_contexts: list):
     """
-    Extracts items from the given dictionary raising an error if the item could not be found
+    Extracts items from the given dictionary raising an error
+    if the item could not be found
     :param payload:
     :param list_of_contexts:
     :return: tuple of the items that were extracted
@@ -49,8 +53,10 @@ def extract_from_payload(payload: dict, list_of_contexts: list):
     """
     return_list = []
     for name in list_of_contexts:
-        if payload.get(name) is None and (name != 'role' and name != 'request_type'):
-            raise PayloadExtractionError('missing \'{}\' parameter'.format(name), 400)
+        if payload.get(name) is None \
+                and (name != 'role' and name != 'request_type'):
+            raise PayloadExtractionError(
+                'missing \'{}\' parameter'.format(name), 400)
         return_list.append(payload.get(name, None))
 
     return tuple(return_list)
@@ -61,7 +67,8 @@ def generate_auth_output(resource, user: User):
     Generates output specific to the auth namespace
     :param resource: The resource that called this function
     :param user: The user whose output should be generated
-    :return: The output dictionary specific to the resource that called this function
+    :return: The output dictionary specific to the resource
+    that called this function
     :rtype: dict
     """
     api = resource.api
@@ -116,13 +123,15 @@ def safe_request_output(resource: Resource, the_request: Request):
     return request_dict
 
 
-def generate_request_output(resource: Resource, the_request: Request, method: str):
+def generate_request_output(resource: Resource, the_request: Request,
+                            method: str):
     """
     Generates output specific to the users namespace
     :param resource: The resource that called this function
     :param the_request: The request whose output should be generated
     :param method: The HTTP method
-    :return: The output dictionary specific to the resource that called this function
+    :return: The output dictionary specific to the resource that called
+     this function
     :rtype: dict
     """
     output_dict = dict(request=safe_request_output(resource, the_request))

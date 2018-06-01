@@ -1,7 +1,9 @@
 import unittest
 
-from MaintenanceTrackerAPI.api.v1.models.request_model import Request, RequestTransactionError, requests_list
-from MaintenanceTrackerAPI.api.v1.models.user_model import Consumer, Admin, users_list
+from MaintenanceTrackerAPI.api.v1.models.request_model import Request, \
+    RequestTransactionError, requests_list
+from MaintenanceTrackerAPI.api.v1.models.user_model import Consumer, Admin, \
+    users_list
 
 
 class BaseRequestTestCase(unittest.TestCase):
@@ -16,26 +18,35 @@ class BaseRequestTestCase(unittest.TestCase):
         """
         users_list.clear()
         requests_list.clear()
-        self.consumer = Consumer('consumer@company.com', 'password.Pa55word', 'What is your favourite company?',
-                                 'company')
-        self.admin = Admin('admin@company.com', 'password.Pa55word', 'What is your favourite company?',
-                           'company')
-        self.arguments = dict(user=self.consumer, request_type='Maintenance', title='Laptop Maintenance',
-                              description='Keyboard cleaning and heat shield replacement')
+        self.consumer = Consumer('consumer@company.com', 'password.Pa55word',
+                                 'What is your favourite company?', 'company')
+        self.admin = Admin('admin@company.com', 'password.Pa55word',
+                           'What is your favourite company?', 'company')
 
-        self.request = Request(self.consumer, 'Maintenance', 'Laptop Maintenance',
+        self.arguments = dict(user=self.consumer, request_type='Maintenance',
+                              title='Laptop Maintenance',
+                              description=
+                              'Keyboard cleaning and heat shield replacement')
+
+        self.request = Request(self.consumer, 'Maintenance',
+                               'Laptop Maintenance',
                                'Keyboard cleaning and heat shield replacement')
 
-    def expect_request_transaction_error(self, expected_error_message: str, the_callable: callable, arguments: dict):
+    def expect_request_transaction_error(self, expected_error_message: str,
+                                         the_callable: callable,
+                                         arguments: dict):
         """
         This function helps refactor how to assert that an exception is raised
         :param expected_error_message: The expected error message
-        :param the_callable: The function that is supposed to raise that error given the arguments
+        :param the_callable: The function that is supposed to raise that error
+         given the arguments
         :param arguments: arguments to use when calling the callable
         :return:
         """
         with self.assertRaises(RequestTransactionError) as a:
-            the_callable(arguments['user'], arguments['request_type'], arguments['title'], arguments['description'])
+            the_callable(arguments['user'],
+                         arguments['request_type'],
+                         arguments['title'], arguments['description'])
         exception = a.exception
         self.assertEqual(expected_error_message, exception.msg)
 
@@ -58,7 +69,8 @@ class MakeRequestTestCase(BaseRequestTestCase):
         """
         self.arguments['user'] = self.admin
         expected_error_message = 'Administrators cannot make requests!'
-        self.expect_request_transaction_error(expected_error_message, Request, self.arguments)
+        self.expect_request_transaction_error(expected_error_message,
+                                              Request, self.arguments)
 
     def test_make_request_with_invalid_title(self):
         """
@@ -67,7 +79,8 @@ class MakeRequestTestCase(BaseRequestTestCase):
         """
         self.arguments['title'] = '############'
         expected_error_message = 'please enter a valid title'
-        self.expect_request_transaction_error(expected_error_message, Request, self.arguments)
+        self.expect_request_transaction_error(expected_error_message,
+                                              Request, self.arguments)
 
     def test_make_request_with_short_title(self):
         """
@@ -76,16 +89,19 @@ class MakeRequestTestCase(BaseRequestTestCase):
         """
         self.arguments['title'] = 'XX'
         expected_error_message = 'title too short. Min of 10 characters allowed'
-        self.expect_request_transaction_error(expected_error_message, Request, self.arguments)
+        self.expect_request_transaction_error(expected_error_message, Request,
+                                              self.arguments)
 
     def test_make_request_with_long_title(self):
         """
         Test that request cannot be made with a title that is too long
         :return: None
         """
-        self.arguments['title'] = 'Dokokara mitemo itsumademo syle mo ginsei sutekidayo ishoukillin it fuan'
+        self.arguments['title'] = 'Dokokara mitemo itsumademo syle mo' \
+                                  ' ginsei sutekidayo ishoukillin it fuan'
         expected_error_message = 'title too long. Max of 70 characters allowed'
-        self.expect_request_transaction_error(expected_error_message, Request, self.arguments)
+        self.expect_request_transaction_error(expected_error_message, Request,
+                                              self.arguments)
 
     def test_make_request_with_wrong_spacing_title(self):
         """
@@ -94,7 +110,8 @@ class MakeRequestTestCase(BaseRequestTestCase):
         """
         self.arguments['title'] = 'X                     X'
         expected_error_message = 'Please check the spacing on your title'
-        self.expect_request_transaction_error(expected_error_message, Request, self.arguments)
+        self.expect_request_transaction_error(expected_error_message, Request,
+                                              self.arguments)
 
     def test_make_request_with_wrong_punctuation_title(self):
         """
@@ -103,16 +120,19 @@ class MakeRequestTestCase(BaseRequestTestCase):
         """
         self.arguments['title'] = 'Aka..\'.\';.\'.;\'.'
         expected_error_message = 'please check the punctuation in your title'
-        self.expect_request_transaction_error(expected_error_message, Request, self.arguments)
+        self.expect_request_transaction_error(expected_error_message, Request,
+                                              self.arguments)
 
     def test_make_request_with_invalid_description(self):
         """
         Test that request cannot be made with invalid description
         :return: None
         """
-        self.arguments['description'] = '###########################################'
+        self.arguments['description'] = '#######################' \
+                                        '####################'
         expected_error_message = 'please enter a valid description'
-        self.expect_request_transaction_error(expected_error_message, Request, self.arguments)
+        self.expect_request_transaction_error(expected_error_message, Request,
+                                              self.arguments)
 
     def test_make_request_with_short_description(self):
         """
@@ -120,38 +140,50 @@ class MakeRequestTestCase(BaseRequestTestCase):
         :return: None
         """
         self.arguments['description'] = 'A'
-        expected_error_message = 'description too short. Min of 40 characters allowed'
-        self.expect_request_transaction_error(expected_error_message, Request, self.arguments)
+        expected_error_message = 'description too short.' \
+                                 ' Min of 40 characters allowed'
+        self.expect_request_transaction_error(expected_error_message, Request,
+                                              self.arguments)
 
     def test_make_request_with_long_description(self):
         """
         Test that request cannot be made with a description that is too long
         :return: None
         """
-        self.arguments['description'] = """Water spilled onto my keyboard. I need it replaced. Water spilled onto my 
-        keyboard. I need it replaced. Water spilled onto my keyboard. I need it replaced. Water spilled onto my 
-        keyboard. I need it replaced. Water spilled onto my keyboard. I need it replaced. Water spilled onto my 
-        keyboard. I need it replaced """
-        expected_error_message = 'description too long. Max of 250 characters allowed'
-        self.expect_request_transaction_error(expected_error_message, Request, self.arguments)
+        self.arguments['description'] = """Water spilled onto my keyboard.
+        I need it replaced. Water spilled onto my keyboard. I need it replaced.
+        Water spilled onto my keyboard. I need it replaced. Water spilled onto
+        my keyboard. I need it replaced. Water spilled onto my keyboard.
+        I need it replaced. Water spilled onto my keyboard. I need it replaced
+        """
+        expected_error_message = 'description too long.' \
+                                 ' Max of 250 characters allowed'
+        self.expect_request_transaction_error(expected_error_message, Request,
+                                              self.arguments)
 
     def test_make_request_with_wrong_spacing_description(self):
         """
         Test that request cannot be made with wrong spacing in the description
         :return: None
         """
-        self.arguments['description'] = 'W               lled onto my keyboard.      I need it replaced'
+        self.arguments['description'] = """W          lled onto my keyboard.
+              I need it             replaced"""
         expected_error_message = 'Please check the spacing on your description'
-        self.expect_request_transaction_error(expected_error_message, Request, self.arguments)
+        self.expect_request_transaction_error(expected_error_message, Request,
+                                              self.arguments)
 
     def test_make_request_with_wrong_punctuation_description(self):
         """
-        Test that request cannot be made with wrong punctuation in the description
+        Test that request cannot be made with wrong punctuation
+         in the description
         :return: None
         """
-        self.arguments['description'] = 'Water spilled onto my Aka..\'.\'.;\'. I need it reAka..\'.\';.\'.;\'.placed'
-        expected_error_message = 'please check the punctuation in your description'
-        self.expect_request_transaction_error(expected_error_message, Request, self.arguments)
+        self.arguments['description'] = """Water spilled onto my Aka..\'.\'.;\'.
+         I need it reAka..\'.\';.\'.;\'.placed"""
+        expected_error_message = \
+            'please check the punctuation in your description'
+        self.expect_request_transaction_error(expected_error_message, Request,
+                                              self.arguments)
 
     def test_make_request_twice(self):
         """
@@ -159,7 +191,8 @@ class MakeRequestTestCase(BaseRequestTestCase):
         :return: None
         """
         expected_error_message = 'similar request exists'
-        self.expect_request_transaction_error(expected_error_message, Request, self.arguments)
+        self.expect_request_transaction_error(expected_error_message, Request,
+                                              self.arguments)
 
 
 class RespondRequestTestCase(BaseRequestTestCase):
@@ -207,7 +240,8 @@ class RespondRequestTestCase(BaseRequestTestCase):
         with self.assertRaises(RequestTransactionError) as a:
             self.request.approve(self.consumer)
         exception = a.exception
-        self.assertEqual('Consumer not allowed to change request status', exception.msg)
+        self.assertEqual('Consumer not allowed to change request status',
+                         exception.msg)
 
     def test_consumer_rejects_request_fail(self):
         """
@@ -217,7 +251,8 @@ class RespondRequestTestCase(BaseRequestTestCase):
         with self.assertRaises(RequestTransactionError) as a:
             self.request.reject(self.consumer)
         exception = a.exception
-        self.assertEqual('Consumer not allowed to change request status', exception.msg)
+        self.assertEqual('Consumer not allowed to change request status',
+                         exception.msg)
 
     def test_consumer_marks_request_in_progress_fail(self):
         """
@@ -227,7 +262,8 @@ class RespondRequestTestCase(BaseRequestTestCase):
         with self.assertRaises(RequestTransactionError) as a:
             self.request.in_progress(self.consumer)
         exception = a.exception
-        self.assertEqual('Consumer not allowed to change request status', exception.msg)
+        self.assertEqual('Consumer not allowed to change request status',
+                         exception.msg)
 
     def test_consumer_resolves_request_fail(self):
         """
@@ -237,7 +273,8 @@ class RespondRequestTestCase(BaseRequestTestCase):
         with self.assertRaises(RequestTransactionError) as a:
             self.request.resolve(self.consumer)
         exception = a.exception
-        self.assertEqual('Consumer not allowed to change request status', exception.msg)
+        self.assertEqual('Consumer not allowed to change request status',
+                         exception.msg)
 
     def test_consumer_cancels_request(self):
         """
@@ -264,7 +301,8 @@ class RespondRequestTestCase(BaseRequestTestCase):
         with self.assertRaises(RequestTransactionError) as a:
             self.request.cancel(self.admin)
         exception = a.exception
-        self.assertEqual('Administrator not allowed to cancel request', exception.msg)
+        self.assertEqual('Administrator not allowed to cancel request',
+                         exception.msg)
 
     def test_admin_deletes_request_fail(self):
         """
@@ -274,7 +312,8 @@ class RespondRequestTestCase(BaseRequestTestCase):
         with self.assertRaises(RequestTransactionError) as a:
             self.request.delete(self.admin)
         exception = a.exception
-        self.assertEqual('Administrator not allowed to delete request', exception.msg)
+        self.assertEqual('Administrator not allowed to delete request',
+                         exception.msg)
 
 
 class EditRequestTestCase(BaseRequestTestCase):
@@ -286,7 +325,8 @@ class EditRequestTestCase(BaseRequestTestCase):
         """
         self.request.edit(self.consumer,
                           dict(title='Another Title',
-                               description='Another description for testing and must reach forty characters'))
+                               description="Another description for testing"
+                                           " and must reach forty characters"))
         self.assertEqual(self.request.title, 'Another Title')
 
     def test_admin_edits_request_fail(self):
@@ -295,11 +335,12 @@ class EditRequestTestCase(BaseRequestTestCase):
         :return: None
         """
         with self.assertRaises(RequestTransactionError) as a:
-            self.request.edit(self.admin,
-                              dict(title='Another Title',
-                                   description='Another description for testing and must reach forty characters'))
+            self.request.edit(self.admin, dict(title='Another Title',
+                                               description="""Another description for testing
+                                and must reach forty characters"""))
         exception = a.exception
-        self.assertEqual('Administrator not allowed to edit request', exception.msg)
+        self.assertEqual('Administrator not allowed to edit request',
+                         exception.msg)
 
     def test_consumer_edits_cancelled_request_fail(self):
         """
@@ -308,8 +349,9 @@ class EditRequestTestCase(BaseRequestTestCase):
         """
         self.request.cancel(self.consumer)
         with self.assertRaises(RequestTransactionError) as a:
-            self.request.edit(self.consumer,
-                              dict(title='Another Title',
-                                   description='Another description for testing and must reach forty characters'))
+            self.request.edit(self.consumer, dict(title='Another Title',
+                                                  description="""Another description for testing
+                                and must reach forty characters"""))
         exception = a.exception
-        self.assertEqual('cannot edit a request which is Cancelled', exception.msg)
+        self.assertEqual('cannot edit a request which is Cancelled',
+                         exception.msg)
