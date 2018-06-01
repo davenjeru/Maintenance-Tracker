@@ -3,10 +3,13 @@ from flask_testing import TestCase
 from MaintenanceTrackerAPI import create_app as create
 from MaintenanceTrackerAPI.api.v1 import api_v1
 from MaintenanceTrackerAPI.api.v1.auth import Login, Logout
-from MaintenanceTrackerAPI.api.v1.models.request_model import requests_list, Request
-from MaintenanceTrackerAPI.api.v1.models.user_model import Admin, Consumer, users_list
+from MaintenanceTrackerAPI.api.v1.models.request_model import requests_list, \
+    Request
+from MaintenanceTrackerAPI.api.v1.models.user_model import Admin, Consumer, \
+    users_list
 from MaintenanceTrackerAPI.api.v1.users import SingleUserSingleRequest
-from MaintenanceTrackerAPI.api.v1.users.single_user_all_requests import SingleUserAllRequests
+from MaintenanceTrackerAPI.api.v1.users.single_user_all_requests import \
+    SingleUserAllRequests
 
 
 class UsersNamespaceTestCase(TestCase):
@@ -25,10 +28,10 @@ class UsersNamespaceTestCase(TestCase):
         """
         users_list.clear()
         self.client = self.create_app().test_client()
-        self.consumer = Consumer('consumer@company.com', 'password.Pa55word', 'What is your favourite company?',
-                                 'company')
-        self.admin = Admin('admin@company.com', 'password.Pa55word', 'What is your favourite company?',
-                           'company')
+        self.consumer = Consumer('consumer@company.com', 'password.Pa55word',
+                                 'What is your favourite company?', 'company')
+        self.admin = Admin('admin@company.com', 'password.Pa55word',
+                           'What is your favourite company?', 'company')
         requests_list.clear()
 
     def login(self, data: dict):
@@ -37,7 +40,8 @@ class UsersNamespaceTestCase(TestCase):
         :param data: A dictionary containing data necessary for logging in
         :return: response object
         """
-        self.client.post(api_v1.url_for(Login), data=str(data), content_type='application/json')
+        self.client.post(api_v1.url_for(Login), data=str(data),
+                         content_type='application/json')
 
     def make_request(self, data: dict, user_id: int):
         """
@@ -46,7 +50,8 @@ class UsersNamespaceTestCase(TestCase):
         :param user_id: The user id that should be added to the route
         :return: response object
         """
-        return self.client.post(api_v1.url_for(SingleUserAllRequests, user_id=user_id),
+        return self.client.post(api_v1.url_for(SingleUserAllRequests,
+                                               user_id=user_id),
                                 data=str(data), content_type='application/json')
 
     def tearDown(self):
@@ -78,12 +83,14 @@ class GetRequestsTestCase(UsersNamespaceTestCase):
 
     def test_get_all_requests_empty_list(self):
         """
-        Test that the there is initially an empty list since the user has not created any requests yet
+        Test that the there is initially an empty list since the user has not
+        created any requests yet
         :return: None
         """
         data = dict(email='consumer@company.com', password='password.Pa55word')
         self.login(data)
-        response = self.client.get(api_v1.url_for(SingleUserAllRequests, user_id=self.consumer.id))
+        response = self.client.get(api_v1.url_for(SingleUserAllRequests,
+                                                  user_id=self.consumer.id))
         self.assertIn(b'[]', response.data)
 
     def test_get_all_requests(self):
@@ -97,16 +104,19 @@ class GetRequestsTestCase(UsersNamespaceTestCase):
 
         # let the user make a request
         data = dict(request_type='Repair', title='Laptop Repair',
-                    description='My laptop fell in water. The screen is black but I can hear sound')
+                    description='My laptop fell in water.'
+                                ' The screen is black but I can hear sound')
         self.make_request(data, self.consumer.id)
 
         # let the user make another request
         data['title'] = 'Phone Repair'
-        data['description'] = 'My phone screen has been destroyed. The screen itself and not the top glass'
+        data['description'] = 'My phone screen has been destroyed.' \
+                              ' The screen itself and not the top glass'
         self.make_request(data, self.consumer.id)
 
         # check the response when a GET request is made
-        response = self.client.get(api_v1.url_for(SingleUserAllRequests, user_id=self.consumer.id))
+        response = self.client.get(api_v1.url_for(SingleUserAllRequests,
+                                                  user_id=self.consumer.id))
         self.assertIn(b'Phone Repair', response.data)
         self.assertIn(b'Laptop Repair', response.data)
 
@@ -118,7 +128,8 @@ class GetRequestsTestCase(UsersNamespaceTestCase):
         self.login(data)
 
         # check the response when a GET request is made
-        response = self.client.get(api_v1.url_for(SingleUserAllRequests, user_id=self.consumer.id))
+        response = self.client.get(api_v1.url_for(SingleUserAllRequests,
+                                                  user_id=self.consumer.id))
         self.assertIn(b'Phone Repair', response.data)
         self.assertIn(b'Laptop Repair', response.data)
 
@@ -127,11 +138,14 @@ class GetRequestsTestCase(UsersNamespaceTestCase):
         Test that a user cannot access another user's requests
         :return: None
         """
-        another_consumer = Consumer('consumer2@company.com', 'password.Pa55word', 'What is your favourite company?',
+        another_consumer = Consumer('consumer2@company.com',
+                                    'password.Pa55word',
+                                    'What is your favourite company?',
                                     'company')
         data = dict(email='consumer@company.com', password='password.Pa55word')
         self.login(data)
-        response = self.client.get(api_v1.url_for(SingleUserAllRequests, user_id=another_consumer.id))
+        response = self.client.get(api_v1.url_for(SingleUserAllRequests,
+                                                  user_id=another_consumer.id))
         self.assert403(response)
 
 
@@ -153,7 +167,8 @@ class MakeRequestsTestCase(UsersNamespaceTestCase):
         data = dict(email='consumer@company.com', password='password.Pa55word')
         self.login(data)
         data = dict(request_type='Repair', title='Laptop Repair',
-                    description='My laptop fell in water. The screen is black but I can hear sound')
+                    description='My laptop fell in water.'
+                                ' The screen is black but I can hear sound')
         response = self.make_request(data, self.consumer.id)
         self.assertEqual(201, response.status_code)
 
@@ -165,7 +180,8 @@ class MakeRequestsTestCase(UsersNamespaceTestCase):
         data = dict(email='admin@company.com', password='password.Pa55word')
         self.login(data)
         data = dict(request_type='Repair', title='Laptop Repair',
-                    description='My laptop fell in water. The screen is black but I can hear sound')
+                    description='My laptop fell in water.'
+                                ' The screen is black but I can hear sound')
         response = self.make_request(data, self.admin.id)
         self.assertEqual(403, response.status_code)
 
@@ -177,7 +193,8 @@ class MakeRequestsTestCase(UsersNamespaceTestCase):
         data = dict(email='consumer@company.com', password='password.Pa55word')
         self.login(data)
         data = dict(request_type='Repair', title='Laptop Repair;;',
-                    description='My laptop fell in water. The screen is black but I can hear sound')
+                    description='My laptop fell in water.'
+                                ' The screen is black but I can hear sound')
         response = self.make_request(data, self.consumer.id)
         self.assertEqual(400, response.status_code)
 
@@ -189,7 +206,8 @@ class MakeRequestsTestCase(UsersNamespaceTestCase):
         data = dict(email='consumer@company.com', password='password.Pa55word')
         self.login(data)
         data = dict(request_type='Repair', title='Laptop Repair',
-                    description='My laptop fell in water. The screen is black but I can hear sound;\'')
+                    description='My laptop fell in water.'
+                                ' The screen is black but I can hear sound;\'')
         response = self.make_request(data, self.consumer.id)
         self.assertEqual(400, response.status_code)
 
@@ -201,9 +219,11 @@ class MakeRequestsTestCase(UsersNamespaceTestCase):
         data = dict(email='consumer@company.com', password='password.Pa55word')
         self.login(data)
         data = dict(request_type='Another Type', title='Laptop Repair',
-                    description='My laptop fell in water. The screen is black but I can hear sound.')
+                    description='My laptop fell in water.'
+                                ' The screen is black but I can hear sound.')
         response = self.make_request(data, self.consumer.id)
-        self.assertIn(b'Cannot recognize the request type given :', response.data)
+        self.assertIn(b'Cannot recognize the request type given :',
+                      response.data)
 
     def test_consumer_makes_request_with_none_request_type(self):
         """
@@ -213,7 +233,8 @@ class MakeRequestsTestCase(UsersNamespaceTestCase):
         data = dict(email='consumer@company.com', password='password.Pa55word')
         self.login(data)
         data = dict(request_type=None, title='Laptop Repair',
-                    description='My laptop fell in water. The screen is black but I can hear sound.')
+                    description='My laptop fell in water.'
+                                ' The screen is black but I can hear sound.')
         response = self.make_request(data, self.consumer.id)
         self.assertEqual(201, response.status_code)
 
@@ -222,9 +243,11 @@ class EditRequestTestCase(UsersNamespaceTestCase):
     def setUp(self):
         UsersNamespaceTestCase.setUp(self)
         data = dict(title='Laptop Repair',
-                    description='My laptop fell in water. The screen is black but I can hear sound.')
+                    description='My laptop fell in water.'
+                                ' The screen is black but I can hear sound.')
 
-        self.request = Request(self.consumer, '', data['title'], data['description'])
+        self.request = Request(self.consumer, '', data['title'],
+                               data['description'])
 
     def edit_request(self, data: dict, user_id: int, request_id: int):
         """
@@ -234,8 +257,11 @@ class EditRequestTestCase(UsersNamespaceTestCase):
         :param user_id: The user id that should be added to the route
         :return: response object
         """
-        return self.client.patch(api_v1.url_for(SingleUserSingleRequest, user_id=user_id, request_id=request_id),
-                                 data=str(data), content_type='application/json')
+        return self.client.patch(api_v1.url_for(SingleUserSingleRequest,
+                                                user_id=user_id,
+                                                request_id=request_id),
+                                 data=str(data),
+                                 content_type='application/json')
 
     def test_login_required(self):
         """
@@ -245,7 +271,8 @@ class EditRequestTestCase(UsersNamespaceTestCase):
         data = dict()
         response = self.edit_request(data, self.consumer.id, self.request.id)
         self.assert401(response)
-        response = self.client.get(api_v1.url_for(SingleUserSingleRequest, user_id=1, request_id=1))
+        response = self.client.get(api_v1.url_for(SingleUserSingleRequest,
+                                                  user_id=1, request_id=1))
         self.assert401(response)
 
     def test_get_one_request(self):
@@ -258,7 +285,8 @@ class EditRequestTestCase(UsersNamespaceTestCase):
         self.login(data)
 
         response = self.client.get(api_v1.url_for(SingleUserSingleRequest,
-                                                  user_id=self.consumer.id, request_id=self.request.id))
+                                                  user_id=self.consumer.id,
+                                                  request_id=self.request.id))
         self.assertIn(b'Laptop Repair', response.data)
 
     def test_user_get_request(self):
@@ -267,13 +295,15 @@ class EditRequestTestCase(UsersNamespaceTestCase):
         :return: None
         """
         # register
-        Consumer('consumer2@company.com', 'password.Pa55word', 'What is your favourite company?',
+        Consumer('consumer2@company.com', 'password.Pa55word',
+                 'What is your favourite company?',
                  'company')
         data = dict(email='consumer2@company.com', password='password.Pa55word')
         self.login(data)
 
         response = self.client.get(api_v1.url_for(SingleUserSingleRequest,
-                                                  user_id=self.consumer.id, request_id=self.request.id))
+                                                  user_id=self.consumer.id,
+                                                  request_id=self.request.id))
         self.assert403(response)
 
     def test_request_not_found(self):
@@ -286,7 +316,8 @@ class EditRequestTestCase(UsersNamespaceTestCase):
         self.login(data)
 
         response = self.client.get(api_v1.url_for(SingleUserSingleRequest,
-                                                  user_id=self.consumer.id, request_id=20 ** 3))
+                                                  user_id=self.consumer.id,
+                                                  request_id=20 ** 3))
         self.assert404(response)
 
     def test_consumer_can_edit_request(self):
@@ -306,7 +337,8 @@ class EditRequestTestCase(UsersNamespaceTestCase):
         # edit request description
         data['title'] = None
         data['description'] = 'This is the new description. I\'m' \
-                              ' just doing this so that I can reach the minimum description character limit'
+                              ' just doing this so that I can reach' \
+                              ' the minimum description character limit'
         response = self.edit_request(data, self.consumer.id, self.request.id)
         self.assertIn(b'This is the new description.', response.data)
 
@@ -354,4 +386,5 @@ class EditRequestTestCase(UsersNamespaceTestCase):
         # edit the request title
         data['title'] = 'New Request Title'
         response = self.edit_request(data, self.consumer.id, self.request.id)
-        self.assertIn(b'cannot edit a request which is Cancelled', response.data)
+        self.assertIn(b'cannot edit a request which is Cancelled',
+                      response.data)

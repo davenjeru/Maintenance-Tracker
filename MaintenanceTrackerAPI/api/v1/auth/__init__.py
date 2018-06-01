@@ -2,7 +2,8 @@ from flask_restplus.namespace import Namespace
 
 from MaintenanceTrackerAPI.api.v1.auth.login import Login, user_login_model
 from MaintenanceTrackerAPI.api.v1.auth.logout import Logout
-from MaintenanceTrackerAPI.api.v1.auth.register import Register, user_registration_model
+from MaintenanceTrackerAPI.api.v1.auth.register import Register, \
+    user_registration_model
 
 auth_ns = Namespace('auth', description='Operations related to authentication')
 

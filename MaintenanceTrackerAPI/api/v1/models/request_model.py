@@ -8,10 +8,11 @@ requests_list = []
 
 class RequestTransactionError(BaseException):
     """
-    This is the exception raised when an error occurs during any request transaction.
+    This is the exception raised when an error occurs during any request
+    transaction.
 
-    :param: msg: str -> The error message
-    :param: abort_code: int -> The HTTP response code that is relevant to this error default 400 (Bad Request)
+    :param: msg: str -> The error message :param: abort_code: int -> The HTTP
+    response code that is relevant to this error default 400 (Bad Request)
     """
 
     def __init__(self, msg: str, abort_code: int = 400):
@@ -23,21 +24,26 @@ class Request(object):
     """
     This class handles the request object and all its functions.
 
-    :param: user -> a user object.
-    :param: request_type -> the type of request, either 'Maintenance' or 'Repair'
-    :param: title -> a short title that summarizes the object(s) being repaired or maintained
-    :param: description -> a brief description of what is supposed to be repaired or maintained
+    :param: user -> a user object. :param: request_type -> the type of
+    request, either 'Maintenance' or 'Repair' :param: title -> a short title
+    that summarizes the object(s) being repaired or maintained :param:
+    description -> a brief description of what is supposed to be repaired or
+    maintained
     """
     id = 1
 
-    def __init__(self, user: Consumer, request_type: str, title: str, description: str):
+    def __init__(self, user: Consumer, request_type: str,
+                 title: str, description: str):
         # Return 403 (Forbidden!) when Administrator tries to make a request
         if user.role != 'Consumer':
-            raise RequestTransactionError('Administrators cannot make requests!', 403)
+            raise RequestTransactionError(
+                'Administrators cannot make requests!', 403)
 
         types_list = ['Maintenance', 'Repair']
         if bool(request_type) and request_type not in types_list:
-            raise RequestTransactionError('Cannot recognize the request type given :{}'.format(request_type))
+            raise RequestTransactionError(
+                'Cannot recognize the request type given :{}'.format(
+                    request_type))
 
         try:
             self.__validate_request_details('title', title)
@@ -48,7 +54,8 @@ class Request(object):
         for request in requests_list:
             if request.title == title and request.description == description:
                 raise RequestTransactionError('similar request exists')
-        # TODO check for the request status to allow re-submission of a request that has already been resolved/rejected
+        # TODO check for the request status to allow re-submission
+        # of a request that has already been resolved/rejected
 
         self.id = Request.id
         self.user_id = user.id
@@ -90,29 +97,38 @@ class Request(object):
         if len(item) < min_length:
             raise AssertionError('{0} too short. Min of {1} characters allowed'.format(name, min_length))
 
-        # check whether the title or description starts with a letter, number, ',",or(
-        if item[0] not in list(string.ascii_letters) + list(string.digits) + ['\'', '\"', '(']:
+        # check whether the title or description starts with a letter,
+        # number, ',",or(
+        if item[0] not in list(string.ascii_letters) + list(string.digits) \
+                + ['\'', '\"', '(']:
             raise AssertionError('please enter a valid {}'.format(name))
 
-        # check whether the title or description end with a letter, number, ',",or(
-        if str(item[-1]) not in list(string.ascii_letters) + list(string.digits) + list('\'\").?!'):
+        # check whether the title or description end with a letter, number,
+        # ',",or(
+        if str(item[-1]) not in list(string.ascii_letters) + \
+                list(string.digits) + list('\'\").?!'):
             raise AssertionError('please enter a valid {}'.format(name))
 
-        # generate a list of words for the validation item with white space as delimiter
+        # generate a list of words for the validation item with white space
+        # as delimiter
         item_words = item.split(' ')
 
         for word in item_words:
             if not word:  # this means there is extra space
-                raise AssertionError('Please check the spacing on your {}'.format(name))
+                raise AssertionError('Please check the'
+                                     ' spacing on your {}'.format(name))
 
             # generate a list of characters from each word and check punctuation
             char_list = list(word)
             for i in range(len(char_list) - 1):
                 if char_list[i] in string.punctuation and char_list[i] != '.':
-                    if char_list[i] in ['!', '?', '.'] and char_list[i + 1] in ['\'', '\"']:
+                    if char_list[i] in ['!', '?', '.'] and char_list[i + 1] in \
+                            ['\'', '\"']:
                         continue
-                    if char_list[i + 1] in string.punctuation and char_list[i] != '.':
-                        raise AssertionError('please check the punctuation in your {}'.format(name))
+                    if char_list[i + 1] in string.punctuation \
+                            and char_list[i] != '.':
+                        raise AssertionError('please check the punctuation in'
+                                             ' your {}'.format(name))
 
     def approve(self, user: Admin):
         """
@@ -127,7 +143,8 @@ class Request(object):
 
         # check the status of the request
         if self.status != 'Pending Approval':
-            raise RequestTransactionError('cannot approve a request which is {}'.format(self.status))
+            raise RequestTransactionError('cannot approve a request'
+                                          ' which is {}'.format(self.status))
 
         self.status = 'Approved'
         self.last_modified = datetime.datetime.now()
@@ -145,7 +162,8 @@ class Request(object):
 
         # check the status of the request
         if self.status != 'Pending Approval':
-            raise RequestTransactionError('cannot reject a request which is {}'.format(self.status))
+            raise RequestTransactionError('cannot reject a request which is'
+                                          ' {}'.format(self.status))
 
         self.status = 'Rejected'
         self.last_modified = datetime.datetime.now()
@@ -163,7 +181,8 @@ class Request(object):
 
         # check the status of the request
         if self.status != 'Approved':
-            raise RequestTransactionError('cannot in progress a request which is {}'.format(self.status))
+            raise RequestTransactionError('cannot in progress a request which'
+                                          ' is {}'.format(self.status))
 
         self.status = 'In Progress'
         self.last_modified = datetime.datetime.now()
@@ -180,7 +199,8 @@ class Request(object):
 
         # check the status of the request
         if self.status != 'In Progress':
-            raise RequestTransactionError('cannot resolve a request which is {}'.format(self.status))
+            raise RequestTransactionError('cannot resolve a request which is'
+                                          ' {}'.format(self.status))
 
         self.status = 'Resolved'
         self.last_modified = datetime.datetime.now()
@@ -198,7 +218,8 @@ class Request(object):
 
         # check the status of the request
         if self.status != 'Pending Approval':
-            raise RequestTransactionError('cannot cancel a request which is {}'.format(self.status))
+            raise RequestTransactionError('cannot cancel a request which is'
+                                          ' {}'.format(self.status))
 
         self.status = 'Cancelled'
         self.last_modified = datetime.datetime.now()
@@ -215,11 +236,13 @@ class Request(object):
 
         # check whether this request belongs to the user given
         if user.id != self.user_id:
-            raise RequestTransactionError('this request does not belong to the selected user', 403)
+            raise RequestTransactionError('this request does not belong to'
+                                          ' the selected user', 403)
 
         # check the request status
         if self.status != 'Pending Approval':
-            raise RequestTransactionError('cannot edit a request which is {}'.format(self.status))
+            raise RequestTransactionError('cannot edit a request which'
+                                          ' is {}'.format(self.status))
 
         title = details.get('title', None)
         description = details.get('description', None)
@@ -235,18 +258,21 @@ class Request(object):
         if title is not None:
             if self.title == title:
                 name = 'title'
-                raise RequestTransactionError('{0} given matches the previous {0}'.format(name))
+                raise RequestTransactionError('{0} given matches'
+                                              ' the previous {0}'.format(name))
         elif description is not None:
             if self.description == description:
                 name = 'description'
-                raise RequestTransactionError('{0} given matches the previous {0}'.format(name))
+                raise RequestTransactionError('{0} given matches the'
+                                              ' previous {0}'.format(name))
 
         for request in requests_list:
             if description is not None and request.description == description:
                 raise RequestTransactionError('similar description exists')
 
         self.title = title if title is not None else self.title
-        self.description = description if description is not None else self.description
+        self.description = description if description is not None \
+            else self.description
 
         self.last_modified = datetime.datetime.now()
         return self
@@ -261,8 +287,10 @@ class Request(object):
         self.__check_for_consumer(user, 'delete')
 
         # check the status of the request
-        if self.status != 'Resolved' and self.status != 'Rejected' and self.status != 'Cancelled':
-            raise RequestTransactionError('cannot delete a request which is {}'.format(self.status))
+        if self.status != 'Resolved' and self.status != 'Rejected' \
+                and self.status != 'Cancelled':
+            raise RequestTransactionError('cannot delete a request which '
+                                          'is {}'.format(self.status))
 
         requests_list.remove(self)
         del self
@@ -274,9 +302,10 @@ class Request(object):
         :rtype: dict
         :return: a dictionary containing the request details
         """
-        return dict(requested_by=self.requested_by, request_type=self.type, title=self.title,
-                    description=self.description, date_requestsed=str(self.date_requested), status=self.status,
-                    last_modified=str(self.last_modified))
+        return dict(requested_by=self.requested_by, request_type=self.type,
+                    title=self.title, description=self.description,
+                    date_requestsed=str(self.date_requested),
+                    status=self.status, last_modified=str(self.last_modified))
 
     @property
     def requested_by(self):
@@ -294,7 +323,8 @@ class Request(object):
         :return: None
         """
         if user.role != 'Administrator':
-            raise RequestTransactionError('{} not allowed to change request status'.format(user.role))
+            raise RequestTransactionError('{} not allowed to change request'
+                                          ' status'.format(user.role))
 
     @staticmethod
     def __check_for_consumer(user, context: str):
@@ -305,4 +335,5 @@ class Request(object):
         :return:
         """
         if user.role != 'Consumer':
-            raise RequestTransactionError('{0} not allowed to {1} request'.format(user.role, context))
+            raise RequestTransactionError('{0} not allowed to {1}'
+                                          ' request'.format(user.role, context))

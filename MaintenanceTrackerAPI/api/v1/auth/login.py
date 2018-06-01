@@ -2,8 +2,8 @@ from flask_login import LoginManager, current_user, login_user
 from flask_restplus import Resource, fields
 from flask_restplus.namespace import Namespace
 
-from MaintenanceTrackerAPI.api.v1.boilerplate import generate_auth_output, PayloadExtractionError, extract_from_payload, \
-    get_validated_payload
+from MaintenanceTrackerAPI.api.v1.boilerplate import generate_auth_output, \
+    PayloadExtractionError, extract_from_payload, get_validated_payload
 from MaintenanceTrackerAPI.api.v1.models.user_model import users_list
 
 auth_ns = Namespace('auth')
@@ -27,7 +27,8 @@ def load_user(user_id):
     """
     for a_user in users_list:
         # In the session, user_id is stored as a unicode character
-        # The chr() converts the int id of the user found to unicode for comparing equality
+        # The chr() converts the int id of the user found to unicode
+        #  for comparing equality
         if chr(a_user.id) == user_id:
             return a_user
 
@@ -44,13 +45,15 @@ class Login(Resource):
 
         Makes use of Flask-Login
 
-        Use the correct user information to login. Guidelines as stipulated in the register route should be followed
+        Use the correct user information to login. Guidelines as stipulated
+        in the register route should be followed
 
         Note: Only one user can be logged in per client
 
         """
         try:
-            return {'message': current_user.email + ' is currently logged in'}, 400
+            return {'message': current_user.email + ' is currently logged in'}, \
+                   400
         except AttributeError:
             pass
 

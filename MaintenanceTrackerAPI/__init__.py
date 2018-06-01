@@ -1,7 +1,8 @@
 from flask import Flask
 
 from MaintenanceTrackerAPI.api.v1 import api_v1_blueprint
-from MaintenanceTrackerAPI.api.v1.auth.login import login_manager as login_manager_v1
+from MaintenanceTrackerAPI.api.v1.auth.login \
+    import login_manager as login_manager_v1
 from instance.config import app_config
 
 

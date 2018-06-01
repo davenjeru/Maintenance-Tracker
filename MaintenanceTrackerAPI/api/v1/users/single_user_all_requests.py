@@ -2,20 +2,26 @@ from flask_login import login_required, current_user
 from flask_restplus import Resource, fields
 from flask_restplus.namespace import Namespace
 
-from MaintenanceTrackerAPI.api.v1.boilerplate import check_id_availability, PayloadExtractionError, \
-    get_validated_payload, extract_from_payload, generate_request_output
-from MaintenanceTrackerAPI.api.v1.models.request_model import requests_list, RequestTransactionError, Request
+from MaintenanceTrackerAPI.api.v1.boilerplate import check_id_availability, \
+    PayloadExtractionError, get_validated_payload, extract_from_payload, \
+    generate_request_output
+from MaintenanceTrackerAPI.api.v1.models.request_model import requests_list, \
+    RequestTransactionError, Request
 from MaintenanceTrackerAPI.api.v1.models.user_model import users_list, User
 
 users_ns = Namespace('users')
 request_model = users_ns.model('request_model', {
-    'request_type': fields.String(title='The request type. Can be \'Maintenance\''
-                                        ' or \'Repair\'. Defaults to \'Repair\' if left empty.', required=False,
-                                  example='Repair'),
+    'request_type': fields.String(
+        title='The request type. Can be \'Maintenance\''
+              ' or \'Repair\'. Defaults to \'Repair\' if left empty.',
+        required=False,
+        example='Repair'),
     'title': fields.String(title='The title of your request', required=True,
                            example='My Request Title'),
-    'description': fields.String(title='The description of your request', required=True,
-                                 example='An explanation of what happened to justify this request.')
+    'description': fields.String(title='The description of your request',
+                                 required=True,
+                                 example='An explanation of what happened'
+                                         ' to justify this request.')
 })
 
 
@@ -23,7 +29,8 @@ class SingleUserAllRequests(Resource):
     @login_required
     @users_ns.response(200, "Success")
     @users_ns.response(401, "You are not logged in hence unauthorized")
-    @users_ns.response(403, "You are logged in but you are not allowed to access this endpoint")
+    @users_ns.response(403, "You are logged in but you are not allowed"
+                            " to access this endpoint")
     def get(self, user_id: int):
         """
         View all requests from a single user
@@ -37,10 +44,12 @@ class SingleUserAllRequests(Resource):
             users_ns.abort(400, 'Administrators do not have requests')
         this_user = None
         try:
-            this_user = check_id_availability(user_id, users_list, str(User.__name__))
+            this_user = check_id_availability(user_id, users_list,
+                                              str(User.__name__))
         except PayloadExtractionError as e:
             users_ns.abort(e.abort_code, e.msg)
-        my_requests_list = [request for request in requests_list if request.user_id == this_user.id]
+        my_requests_list = [request for request in requests_list if
+                            request.user_id == this_user.id]
         my_requests_list_output = []
         for a_request in my_requests_list:
             my_requests_list_output.append(a_request.serialize)
@@ -51,7 +60,8 @@ class SingleUserAllRequests(Resource):
     @users_ns.response(201, 'Request made successfully')
     @users_ns.response(400, 'Bad request')
     @users_ns.response(401, 'Not logged in hence unauthorized')
-    @users_ns.response(403, 'Logged in but forbidden from performing this action')
+    @users_ns.response(403,
+                       'Logged in but forbidden from performing this action')
     def post(self, user_id: int):
         """
         Make a request
@@ -75,12 +85,14 @@ class SingleUserAllRequests(Resource):
         try:
             payload = get_validated_payload(self)
             list_of_names = ['request_type', 'title', 'description']
-            request_type, title, description = extract_from_payload(payload, list_of_names)
+            request_type, title, description = extract_from_payload(
+                payload, list_of_names)
         except PayloadExtractionError as e:
             users_ns.abort(e.abort_code, e.msg)
 
         for a_request in requests_list:
-            if a_request.title == title and a_request.description == description:
+            if a_request.title == title \
+                    and a_request.description == description:
                 users_ns.abort(400, 'request already exists')
 
         request = None

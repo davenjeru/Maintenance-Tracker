@@ -49,7 +49,8 @@ class AppTestCase(TestCase):
 
     def test_not_json(self):
         """
-        Test when the request lacks header lacks 'content_type='application/json''
+        Test when the request lacks header lacks
+         'content_type='application/json''
         :return: None
         """
         response = self.client.post(api_v1.url_for(Register))
@@ -60,7 +61,8 @@ class AppTestCase(TestCase):
         Test that the server checks when the request body is empty
         :return: None
         """
-        response = self.client.post(api_v1.url_for(Register), content_type='application/json')
+        response = self.client.post(api_v1.url_for(Register),
+                                    content_type='application/json')
         self.assertEqual(400, response.status_code)
         self.assertIn(b'no data was found in the request', response.data)
 
@@ -69,8 +71,10 @@ class AppTestCase(TestCase):
         """
         Helper function for registering a user to avoid code duplication
         :param email: email address of the user to be registered
-        :param password_tuple: a tuple containing 'password' and 'confirm_password'
-        :param security_tuple: a tuple containing 'security_question' and 'security_answer'
+        :param password_tuple: a tuple containing 'password'
+         and 'confirm_password'
+        :param security_tuple: a tuple containing 'security_question'
+         and 'security_answer'
         :param role: 'the role that the user should be created under'
         :return: response object
         """
@@ -78,7 +82,8 @@ class AppTestCase(TestCase):
         data['password'], data['confirm_password'] = password_tuple
         data['security_question'], data['security_answer'] = security_tuple
         data['role'] = role
-        return self.client.post(api_v1.url_for(Register), data=str(data), content_type='application/json')
+        return self.client.post(api_v1.url_for(Register), data=str(data),
+                                content_type='application/json')
 
     def test_a1_consumer_register_pass(self):
         """
@@ -88,31 +93,36 @@ class AppTestCase(TestCase):
         password_tuple = ('password.Pa55word', 'password.Pa55word')
         security_tuple = ('What is your favourite company?', 'company')
 
-        response = self.register('consumer@company.com', password_tuple, security_tuple)
+        response = self.register('consumer@company.com', password_tuple,
+                                 security_tuple)
         self.assertEqual(201, response.status_code)
         self.assertIn(b'Consumer', response.data)
         self.assertIn(b'user registered successfully', response.data)
 
         # try to create consumer again with the same email address
-        response = self.register('consumer@company.com', password_tuple, security_tuple)
+        response = self.register('consumer@company.com', password_tuple,
+                                 security_tuple)
         self.assertIn(b'user with similar email exists', response.data)
         self.assert400(response)
 
     def test_a1_admin_register_pass(self):
         """
-        Test that an Administrator is created when the role is specified as 'Administrator'
+        Test that an Administrator is created when the role
+         is specified as 'Administrator'
         :return: None
         """
         password_tuple = ('password.Pa55word', 'password.Pa55word')
         security_tuple = ('What is your favourite company?', 'company')
 
-        response = self.register('admin@company.com', password_tuple, security_tuple, role='Administrator')
+        response = self.register('admin@company.com', password_tuple,
+                                 security_tuple, role='Administrator')
         self.assertEqual(201, response.status_code)
         self.assertIn(b'Admin', response.data)
         self.assertIn(b'user registered successfully', response.data)
 
         # try to create administrator again with the same email address
-        response = self.register('admin@company.com', password_tuple, security_tuple)
+        response = self.register('admin@company.com', password_tuple,
+                                 security_tuple)
         self.assertIn(b'user with similar email exists', response.data)
         self.assert400(response)
 
@@ -132,18 +142,21 @@ class AppTestCase(TestCase):
         """
         password_tuple = ('password', 'password')
         security_tuple = ('What is your favourite company?', 'company')
-        response = self.register('email@company.com', password_tuple, security_tuple)
+        response = self.register('email@company.com', password_tuple,
+                                 security_tuple)
         self.assert400(response)
         self.assertIn(b'password syntax is invalid', response.data)
 
     def test_a4_register_passwords_no_match(self):
         """
-        Test that 'password' and 'confirm_password' fields that do not match should not register user
+        Test that 'password' and 'confirm_password' fields that do not match
+         should not register user
         :return: None
         """
         password_tuple = ('password.Pa55word', 'password')
         security_tuple = ('What is your favourite company?', 'company')
-        response = self.register('email@company.com', password_tuple, security_tuple)
+        response = self.register('email@company.com', password_tuple,
+                                 security_tuple)
         self.assert400(response)
         self.assertIn(b'passwords do not match', response.data)
 
@@ -155,7 +168,8 @@ class AppTestCase(TestCase):
         :return: None
         """
         data = dict(email=email, password=password)
-        return self.client.post(api_v1.url_for(Login), data=str(data), content_type='application/json')
+        return self.client.post(api_v1.url_for(Login), data=str(data),
+                                content_type='application/json')
 
     def test_a7_login(self):
         """

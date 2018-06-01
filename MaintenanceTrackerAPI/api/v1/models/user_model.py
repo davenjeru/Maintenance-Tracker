@@ -9,10 +9,12 @@ users_list = []
 
 class UserTransactionError(BaseException):
     """
-    This is the exception raised when an error occurs during any user transaction.
+    This is the exception raised when an error occurs during
+     any user transaction.
 
     :param: msg: str -> The error message
-    :param: abort_code: int -> The HTTP response code that is relevant to this error default 400 (Bad Request)
+    :param: abort_code: int -> The HTTP response code that is relevant to this
+     error default 400 (Bad Request)
     """
 
     def __init__(self, msg: str, abort_code: int = 400):
@@ -28,7 +30,8 @@ class User(UserMixin):
 
     id = 1
 
-    def __init__(self, email: str, password: str, security_question: str, security_answer: str):
+    def __init__(self, email: str, password: str, security_question: str,
+                 security_answer: str):
 
         try:
             self._validate_user_details('email', email)
@@ -71,7 +74,8 @@ class User(UserMixin):
         """
         return check_password_hash(self.password_hash, password)
 
-    def reset_password(self, security_question: str, security_answer: str, new_password: str):
+    def reset_password(self, security_question: str, security_answer: str,
+                       new_password: str):
         """
         Enables user to reset password
         :param security_question: The security question that the user chose
@@ -98,9 +102,11 @@ class User(UserMixin):
         :param item: item to be validated
         """
 
-        def validate_security_question_or_answer(context: str, validation_item: str):
+        def validate_security_question_or_answer(context: str,
+                                                 validation_item: str):
 
-            # set max and min length out here so that it will be easier to validate later
+            # set max and min length out here so that it will be easier to
+            # validate later
             max_length, min_length = None, None
 
             if context == 'security question':
@@ -109,16 +115,20 @@ class User(UserMixin):
 
                 # Check whether security question starts with 'Wh' or 'Are'
                 if validation_item[0] not in list('WwAa'):
-                    raise AssertionError('{} must start with a \'Wh\' or a \'Are\' question'.format(context))
+                    raise AssertionError('{} must start with a \'Wh\' or a'
+                                         ' \'Are\' question'.format(context))
 
                 # check whether security question ends with a question mark
                 if validation_item[-1] != '?':
-                    raise AssertionError('{} must end with a question mark \'?\''.format(context))
+                    raise AssertionError('{} must end with a question mark'
+                                         ' \'?\''.format(context))
 
                 # make sure there are no punctuations in between
                 for char in list(validation_item[:-1]):
                     if char in string.punctuation:
-                        raise AssertionError('{} must not contain any punctuations mid sentence'.format(context))
+                        raise AssertionError('{} must not contain any'
+                                             ' punctuations mid'
+                                             ' sentence'.format(context))
 
             if context == 'security answer':
                 max_length = 20
@@ -127,24 +137,31 @@ class User(UserMixin):
                 # security answer should not have any punctuations
                 for char in list(validation_item):
                     if char in string.punctuation:
-                        raise AssertionError('{} must not contain any punctuations'.format(context))
+                        raise AssertionError('{} must not contain any'
+                                             ' punctuations'.format(context))
 
             # this is where length is checked to avoid checking twice
             if len(validation_item) < min_length:
-                raise AssertionError('{0} is too short. Min of {1} characters'.format(context, min_length))
+                raise AssertionError('{0} is too short. Min of {1}'
+                                     ' characters'.format(context, min_length))
             if len(validation_item) > max_length:
-                raise AssertionError('{0} too long. Max of {1} characters'.format(context, max_length))
+                raise AssertionError('{0} too long. Max of {1}'
+                                     ' characters'.format(context, max_length))
 
             # check for spacing issues
             for word in validation_item.split(' '):
                 if not word:
-                    raise AssertionError('Please check the spacing on your {}'.format(context))
+                    raise AssertionError('Please check the spacing on your'
+                                         ' {}'.format(context))
 
-        email_pattern = re.compile(r"(^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$)")
+        email_pattern = re.compile(
+            r"(^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$)")
         password_pattern = re.compile(
-            r"(?=^.{12,80}$)(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^;*()_+}{:'?/.,])(?!.*\s).*$")
+            r"(?=^.{12,80}$)(?=.*\d)"
+            r"(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^;*()_+}{:'?/.,])(?!.*\s).*$")
 
-        if not item:  # this means that the function was called with the required parameter set as None
+        if not item:  # this means that the function was called with the
+            # required parameter set as None
             raise AssertionError('missing \"{0}\" parameter'.format(name))
 
         if name == 'email':
@@ -176,7 +193,8 @@ class Consumer(User):
     - Delete requests
     """
 
-    def __init__(self, email: str, password: str, security_question: str, security_answer: str):
+    def __init__(self, email: str, password: str, security_question: str,
+                 security_answer: str):
         super().__init__(email, password, security_question, security_answer)
         self.__role = 'Consumer'
         self.__request_count = 0
@@ -207,7 +225,8 @@ class Admin(User):
         - Update request statuses
     """
 
-    def __init__(self, email: str, password: str, security_question: str, security_answer: str):
+    def __init__(self, email: str, password: str, security_question: str,
+                 security_answer: str):
         super().__init__(email, password, security_question, security_answer)
         self.__role = 'Administrator'
 
