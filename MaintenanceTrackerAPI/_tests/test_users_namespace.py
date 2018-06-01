@@ -388,3 +388,19 @@ class EditRequestTestCase(UsersNamespaceTestCase):
         response = self.edit_request(data, self.consumer.id, self.request.id)
         self.assertIn(b'cannot edit a request which is Cancelled',
                       response.data)
+
+    def test_edit_request_with_nothing(self):
+        """
+        Test that a request cannot be edited with nothing in the request body
+        :return: None
+        """
+        # login
+        data = dict(email='consumer@company.com', password='password.Pa55word')
+        self.login(data)
+
+        # remove all keys and values in the dictionary
+        data.clear()
+        response = self.edit_request(data, self.consumer.id, self.request.id)
+        self.assertIn(b'could not edit request, please insert'
+                      b' title or description',
+                      response.data)
