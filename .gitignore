@@ -104,3 +104,4 @@ venv.bak/
 
 # pycharm
 .idea/
+.xml
