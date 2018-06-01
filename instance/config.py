@@ -1,3 +1,6 @@
+import os
+
+
 class Config(object):
     """Parent configuration class"""
     DEBUG = False
@@ -12,6 +15,7 @@ class Development(Config):
 class Production(Config):
     DEBUG = False
     TESTING = False
+    SECRET_KEY = os.getenv('SECRET_KEY')
 
 
 class Testing(Config):
