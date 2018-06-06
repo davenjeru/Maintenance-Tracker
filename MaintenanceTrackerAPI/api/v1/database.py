@@ -30,3 +30,13 @@ class Database:
     def close(self):
         self.cur.close()
         self.conn.close()
+
+    def create_all(self):
+        create_users_table = "CREATE TABLE if not exists users (" \
+                             "id integer PRIMARY KEY," \
+                             "email varchar UNIQUE NOT NULL," \
+                             "password_hash varchar NOT NULL," \
+                             "security_question varchar NOT NULL," \
+                             "security_answer_hash varchar NOT NULL);"
+        self.query(create_users_table)
+        self.conn.commit()
