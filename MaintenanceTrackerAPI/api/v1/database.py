@@ -46,12 +46,13 @@ class Database:
                                 "id serial PRIMARY KEY," \
                                 "user_id integer references" \
                                 " users(id) NOT NULL," \
+                                "type varchar NOT NULL DEFAULT 'Repair'," \
                                 "title varchar NOT NULL," \
                                 "description varchar NOT NULL," \
                                 "status varchar NOT NULL" \
                                 " DEFAULT 'Pending Approval'," \
-                                "date_requested date NOT NULL," \
-                                "last_modified date," \
+                                "date_requested timestamp NOT NULL," \
+                                "last_modified timestamp," \
                                 "requested_by varchar not null);"
         self.query(create_requests_table)
         self.conn.commit()
@@ -78,7 +79,11 @@ class Database:
         """
         query = "select * from users where email={}".format("'" + email + "'")
         self.query(query)
-        item = self.cur.fetchone()
+        try:
+            item = self.cur.fetchone()
+        except Exception:
+            return None
+
         if not item:
             user = None
         else:
@@ -102,6 +107,22 @@ class Database:
               ' security_answer_hash, role) values(%s, %s, %s, %s, %s)'
         data = (email, password_hash, security_question, security_answer_hash
                 , role)
+        self.cur = self.conn.cursor()
+        self.cur.execute(sql, data)
+        self.conn.commit()
+
+    def save_request(self, request):
+        user_id = request.user_id
+        request_type = request.type
+        title = request.title
+        description = request.description
+        date_requested = request.date_requested
+        requested_by = request.requested_by
+        sql = 'insert into requests(user_id, type, title, description,' \
+              ' date_requested, requested_by) values' \
+              '(%s, %s, %s, %s, %s, %s)'
+        data = (user_id, request_type, title, description, date_requested,
+                requested_by)
         self.cur = self.conn.cursor()
         self.cur.execute(sql, data)
         self.conn.commit()
