@@ -1,7 +1,7 @@
 import unittest
 
-from MaintenanceTrackerAPI.api.v1.models.user_model import User, \
-    UserTransactionError, users_list, Admin, Consumer
+from MaintenanceTrackerAPI.api.v1.exceptions import UserTransactionError
+from MaintenanceTrackerAPI.api.v1.models.user_model import User
 
 
 class UserBaseTestCase(unittest.TestCase):

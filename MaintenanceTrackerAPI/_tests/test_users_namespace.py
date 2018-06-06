@@ -3,10 +3,7 @@ from flask_testing import TestCase
 from MaintenanceTrackerAPI import create_app as create
 from MaintenanceTrackerAPI.api.v1 import api_v1
 from MaintenanceTrackerAPI.api.v1.auth import Login, Logout
-from MaintenanceTrackerAPI.api.v1.models.request_model import requests_list, \
-    Request
-from MaintenanceTrackerAPI.api.v1.models.user_model import Admin, Consumer, \
-    users_list
+from MaintenanceTrackerAPI.api.v1.models.request_model import Request
 from MaintenanceTrackerAPI.api.v1.users import SingleUserSingleRequest
 from MaintenanceTrackerAPI.api.v1.users.single_user_all_requests import \
     SingleUserAllRequests
