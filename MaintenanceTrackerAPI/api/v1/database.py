@@ -33,7 +33,7 @@ class Database:
 
     def create_all(self):
         create_users_table = "CREATE TABLE if not exists users (" \
-                             "id integer PRIMARY KEY," \
+                             "id serial PRIMARY KEY," \
                              "email varchar UNIQUE NOT NULL," \
                              "password_hash varchar NOT NULL," \
                              "security_question varchar NOT NULL," \
@@ -42,7 +42,7 @@ class Database:
         self.conn.commit()
 
         create_requests_table = "CREATE TABLE if not exists requests (" \
-                                "id integer PRIMARY KEY," \
+                                "id serial PRIMARY KEY," \
                                 "user_id integer references" \
                                 " users(id) NOT NULL," \
                                 "title varchar NOT NULL," \
@@ -56,8 +56,8 @@ class Database:
         self.conn.commit()
 
         create_token_blacklist_table = "CREATE TABLE if not exists tokens (" \
-                                       "id integer PRIMARY KEY," \
-                                       "jti integer NOT NULL," \
+                                       "id serial PRIMARY KEY," \
+                                       "jti varchar NOT NULL," \
                                        "expires timestamp NOT NULL);"
         self.query(create_token_blacklist_table)
         self.conn.commit()
