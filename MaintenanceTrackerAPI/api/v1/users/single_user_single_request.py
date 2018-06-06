@@ -3,13 +3,9 @@ from flask_restplus import Resource
 from flask_restplus.namespace import Namespace
 
 from MaintenanceTrackerAPI.api.v1.boilerplate \
-    import check_id_availability, safe_request_output, \
-    generate_request_output, extract_from_payload, get_validated_payload
+    import generate_request_output, extract_from_payload
 from MaintenanceTrackerAPI.api.v1.exceptions import RequestTransactionError, \
     PayloadExtractionError
-from MaintenanceTrackerAPI.api.v1.models.request_model import requests_list, \
-    Request
-from MaintenanceTrackerAPI.api.v1.models.user_model import users_list, User
 from MaintenanceTrackerAPI.api.v1.users.single_user_all_requests \
     import request_model
 
@@ -27,28 +23,7 @@ class SingleUserSingleRequest(Resource):
         """
         View a single request from a specific user
         """
-
-        if current_user.role != 'Administrator' and current_user.id != user_id:
-            users_ns.abort(403)
-
-        try:
-            check_id_availability(user_id, users_list, str(User.__name__))
-            check_id_availability(request_id, requests_list,
-                                  str(Request.__name__))
-        except PayloadExtractionError as e:
-            users_ns.abort(e.abort_code, e.msg)
-
-        for request in requests_list:
-            if request.user_id == user_id and request.id == request_id:
-                output = dict(request=
-                              safe_request_output(self,
-                                                  check_id_availability(
-                                                      request_id,
-                                                      requests_list,
-                                                      str(Request.__name__))))
-                return output
-        else:
-            users_ns.abort(400, 'the requested user does not own this request')
+        pass
 
     @login_required
     @users_ns.expect(request_model)
@@ -73,13 +48,7 @@ class SingleUserSingleRequest(Resource):
             users_ns.abort(403)
 
         title, description, this_request, payload = None, None, None, None
-        try:
-            check_id_availability(user_id, users_list, str(User.__name__))
-            this_request = check_id_availability(request_id, requests_list,
-                                                 str(Request.__name__))
-            payload = get_validated_payload(self)
-        except PayloadExtractionError as e:
-            users_ns.abort(e.abort_code, e.msg)
+        pass
 
         try:
             title = extract_from_payload(payload, ['title'])
