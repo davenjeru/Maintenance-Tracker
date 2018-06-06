@@ -2,34 +2,29 @@ from flask import url_for, request
 from flask_restplus import Resource
 from werkzeug.exceptions import BadRequest
 
+from MaintenanceTrackerAPI.api.v1.exceptions import PayloadExtractionError
 from MaintenanceTrackerAPI.api.v1.models.request_model import Request
 from MaintenanceTrackerAPI.api.v1.models.user_model import User
-
-
-class PayloadExtractionError(BaseException):
-    """
-    Custom exception that will be raised if there is an error
-    during payload extraction
-    """
-    def __init__(self, msg: str, abort_code: int = 400):
-        self.msg = msg
-        self.abort_code = abort_code
 
 
 def get_validated_payload(resource: Resource):
     """
     Checks whether the request data is in JSON raising an error if not
-    Evaluates the request data to a dict literal if it is a string or bytes object
+    Evaluates the request data to a dict literal if it is a string or bytes
+    object
     :param resource:
     :return: validated payload
     :rtype: dict
     """
-    if request.content_type != 'application/json':  # check whether the request body is in JSON format
-        raise PayloadExtractionError('request data should be in json format', 415)
+    # check whether the request body is in JSON format
+    if request.content_type != 'application/json':
+        raise PayloadExtractionError('request data should be in json format',
+                                     415)
     try:
         # in the tests, request body is sent as string so we have to eval the
         #  body to dict
-        payload = eval(resource.api.payload) if type(resource.api.payload) == str else resource.api.payload
+        payload = eval(resource.api.payload) if type(resource.api.payload) == \
+                                                str else resource.api.payload
     except BadRequest:
         # if an error is caught as a bad request, try and get the data from
         # request.data if its there
