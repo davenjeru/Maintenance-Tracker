@@ -1,9 +1,7 @@
 import unittest
 
 from MaintenanceTrackerAPI.api.v1.models.request_model import Request, \
-    RequestTransactionError, requests_list
-from MaintenanceTrackerAPI.api.v1.models.user_model import Consumer, Admin, \
-    users_list
+    RequestTransactionError
 
 
 class BaseRequestTestCase(unittest.TestCase):

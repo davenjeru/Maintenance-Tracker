@@ -4,6 +4,7 @@ import string
 from werkzeug.security import generate_password_hash
 
 from MaintenanceTrackerAPI.api.v1.database import Database
+from MaintenanceTrackerAPI.api.v1.exceptions import UserTransactionError
 
 db = Database()
 
