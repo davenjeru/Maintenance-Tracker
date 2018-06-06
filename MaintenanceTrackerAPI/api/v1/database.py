@@ -54,3 +54,10 @@ class Database:
                                 "requested_by varchar not null);"
         self.query(create_requests_table)
         self.conn.commit()
+
+        create_token_blacklist_table = "CREATE TABLE if not exists tokens (" \
+                                       "id integer PRIMARY KEY," \
+                                       "jti integer NOT NULL," \
+                                       "expires timestamp NOT NULL);"
+        self.query(create_token_blacklist_table)
+        self.conn.commit()
