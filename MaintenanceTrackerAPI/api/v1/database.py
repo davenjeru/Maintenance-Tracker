@@ -61,3 +61,9 @@ class Database:
                                        "expires timestamp NOT NULL);"
         self.query(create_token_blacklist_table)
         self.conn.commit()
+
+    def drop_all(self):
+        self.query("drop table requests;")
+        self.query("drop table users;")
+        self.query("drop table tokens;")
+        self.conn.commit()
