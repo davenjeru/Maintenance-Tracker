@@ -2,13 +2,11 @@ from flask_login import login_required, current_user
 from flask_restplus import Resource, fields
 from flask_restplus.namespace import Namespace
 
-from MaintenanceTrackerAPI.api.v1.boilerplate import check_id_availability, \
-    generate_request_output, get_validated_payload, extract_from_payload
+from MaintenanceTrackerAPI.api.v1.boilerplate import generate_request_output, \
+    get_validated_payload, extract_from_payload
 from MaintenanceTrackerAPI.api.v1.exceptions import PayloadExtractionError, \
     RequestTransactionError
-from MaintenanceTrackerAPI.api.v1.models.request_model import requests_list, \
-    Request
-from MaintenanceTrackerAPI.api.v1.models.user_model import users_list, User
+from MaintenanceTrackerAPI.api.v1.models.request_model import Request
 
 users_ns = Namespace('users')
 request_model = users_ns.model('request_model', {
@@ -43,18 +41,7 @@ class SingleUserAllRequests(Resource):
 
         if current_user.id == user_id and current_user.role == 'Administrator':
             users_ns.abort(400, 'Administrators do not have requests')
-        this_user = None
-        try:
-            this_user = check_id_availability(user_id, users_list,
-                                              str(User.__name__))
-        except PayloadExtractionError as e:
-            users_ns.abort(e.abort_code, e.msg)
-        my_requests_list = [request for request in requests_list if
-                            request.user_id == this_user.id]
-        my_requests_list_output = []
-        for a_request in my_requests_list:
-            my_requests_list_output.append(a_request.serialize)
-        return dict(requests=my_requests_list_output)
+        pass
 
     @login_required
     @users_ns.expect(request_model)
@@ -73,10 +60,6 @@ class SingleUserAllRequests(Resource):
         4. Duplicate requests will not be created
 
         """
-        try:
-            check_id_availability(user_id, users_list, str(User.__name__))
-        except PayloadExtractionError as e:
-            users_ns.abort(e.abort_code, e.msg)
 
         if current_user.id != user_id:
             users_ns.abort(403)
@@ -90,11 +73,6 @@ class SingleUserAllRequests(Resource):
                 payload, list_of_names)
         except PayloadExtractionError as e:
             users_ns.abort(e.abort_code, e.msg)
-
-        for a_request in requests_list:
-            if a_request.title == title \
-                    and a_request.description == description:
-                users_ns.abort(400, 'request already exists')
 
         request = None
         try:
