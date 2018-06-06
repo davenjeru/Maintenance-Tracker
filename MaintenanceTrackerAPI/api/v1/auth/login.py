@@ -3,7 +3,8 @@ from flask_restplus import Resource, fields
 from flask_restplus.namespace import Namespace
 
 from MaintenanceTrackerAPI.api.v1.boilerplate import generate_auth_output, \
-    PayloadExtractionError, extract_from_payload, get_validated_payload
+    extract_from_payload, get_validated_payload
+from MaintenanceTrackerAPI.api.v1.exceptions import PayloadExtractionError
 from MaintenanceTrackerAPI.api.v1.models.user_model import users_list
 
 auth_ns = Namespace('auth')

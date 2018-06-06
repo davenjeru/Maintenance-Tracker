@@ -3,10 +3,12 @@ from flask_restplus import Resource
 from flask_restplus.namespace import Namespace
 
 from MaintenanceTrackerAPI.api.v1.boilerplate \
-    import check_id_availability, PayloadExtractionError, safe_request_output, \
+    import check_id_availability, safe_request_output, \
     generate_request_output, extract_from_payload, get_validated_payload
-from MaintenanceTrackerAPI.api.v1.models.request_model \
-    import requests_list, Request, RequestTransactionError
+from MaintenanceTrackerAPI.api.v1.exceptions import RequestTransactionError, \
+    PayloadExtractionError
+from MaintenanceTrackerAPI.api.v1.models.request_model import requests_list, \
+    Request
 from MaintenanceTrackerAPI.api.v1.models.user_model import users_list, User
 from MaintenanceTrackerAPI.api.v1.users.single_user_all_requests \
     import request_model
