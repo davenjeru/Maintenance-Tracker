@@ -6,6 +6,8 @@ from MaintenanceTrackerAPI.api.v1.auth import Register
 from MaintenanceTrackerAPI.api.v1.database import Database
 
 db = Database()
+db.drop_all()
+db.create_all()
 
 
 class BaseTestCase(TestCase):
