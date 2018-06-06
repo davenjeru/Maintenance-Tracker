@@ -3,6 +3,7 @@ from flask import Flask
 from MaintenanceTrackerAPI.api.v1 import api_v1_blueprint
 from MaintenanceTrackerAPI.api.v1.auth.login \
     import login_manager as login_manager_v1
+from MaintenanceTrackerAPI.api.v1.database import Database
 from instance.config import app_config
 
 
@@ -26,5 +27,13 @@ def create_app(config_name):
 
     # register extensions
     login_manager_v1.init_app(app)
+
+    if config_name == 'development':
+        def prepare_tables():
+            db = Database()
+            db.drop_all()
+            db.create_all()
+
+        app.before_first_request(prepare_tables())
 
     return app
