@@ -34,6 +34,6 @@ def create_app(config_name):
             db.drop_all()
             db.create_all()
 
-        app.before_first_request(prepare_tables())
+        app.before_first_request(prepare_tables)
 
     return app
