@@ -3,10 +3,11 @@ from flask_restplus import Resource, fields
 from flask_restplus.namespace import Namespace
 
 from MaintenanceTrackerAPI.api.v1.boilerplate import check_id_availability, \
-    PayloadExtractionError, get_validated_payload, extract_from_payload, \
-    generate_request_output
+    generate_request_output, get_validated_payload, extract_from_payload
+from MaintenanceTrackerAPI.api.v1.exceptions import PayloadExtractionError, \
+    RequestTransactionError
 from MaintenanceTrackerAPI.api.v1.models.request_model import requests_list, \
-    RequestTransactionError, Request
+    Request
 from MaintenanceTrackerAPI.api.v1.models.user_model import users_list, User
 
 users_ns = Namespace('users')
