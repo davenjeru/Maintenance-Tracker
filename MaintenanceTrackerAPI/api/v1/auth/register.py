@@ -4,7 +4,7 @@ from flask_restplus.namespace import Namespace
 from MaintenanceTrackerAPI.api.v1.boilerplate import get_validated_payload, \
     extract_from_payload, generate_auth_output, \
     PayloadExtractionError
-from MaintenanceTrackerAPI.api.v1.models.user_model import Consumer, Admin, \
+from MaintenanceTrackerAPI.api.v1.models.user_model import User, \
     UserTransactionError
 
 auth_ns = Namespace('auth')
@@ -78,11 +78,11 @@ class Register(Resource):
         created_user = None
         try:
             if role is None or role == 'Consumer':
-                created_user = Consumer(email, password, security_question,
-                                        security_answer)
+                created_user = User(email, password, security_question,
+                                    security_answer)
             elif role == 'Administrator':
-                created_user = Admin(email, password, security_question,
-                                     security_answer)
+                created_user = User(email, password, security_question,
+                                    security_answer, role=role)
             else:
                 auth_ns.abort(400, 'role specified does not exist')
         except UserTransactionError as e:
