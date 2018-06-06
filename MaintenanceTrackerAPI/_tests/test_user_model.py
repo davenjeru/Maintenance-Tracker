@@ -1,7 +1,11 @@
 import unittest
 
+from MaintenanceTrackerAPI._tests import db
 from MaintenanceTrackerAPI.api.v1.exceptions import UserTransactionError
 from MaintenanceTrackerAPI.api.v1.models.user_model import User
+
+u = User('email@company.com', 'password.Pa55word',
+         'What is your favourite company?', 'company')
 
 
 class UserBaseTestCase(unittest.TestCase):
@@ -11,15 +15,11 @@ class UserBaseTestCase(unittest.TestCase):
 
         :return: None
         """
-        users_list.clear()
         self.arguments = dict(email='email@company.com',
                               password='password.Pa55word',
                               security_question='What'
                                                 ' is your favourite company?',
                               security_answer='company')
-
-        self.u = User('email@company.com', 'password.Pa55word',
-                      'What is your favourite company?', 'company')
 
     def tearDown(self):
         """
@@ -27,7 +27,7 @@ class UserBaseTestCase(unittest.TestCase):
 
         :return: None
         """
-        users_list.clear()
+        pass
 
     def expect_user_transaction_error(self, expected_error_message: str,
                                       the_callable: callable, arguments: dict):
@@ -47,15 +47,25 @@ class UserBaseTestCase(unittest.TestCase):
         self.assertEqual(expected_error_message, exception.msg)
 
 
-class ModelsTestCase(UserBaseTestCase):
+class CreateUserTestCase(UserBaseTestCase):
 
     def test_create_user_pass(self):
         """
         Test that a user can be created
         :return: None
         """
-        self.assertEqual('email@company.com', self.u.email)
-        self.assertTrue(self.u.authenticate('password.Pa55word'))
+        self.assertEqual('email@company.com', u.email)
+        self.assertEqual(db.get_user_by_email(u.email)['user_id'], 1)
+
+    def test_create_duplicate_user(self):
+        """
+        Test that a user cannot be created with an email similar to one in the
+        database
+        :return: None
+        """
+        expected_error_message = 'user with similar email exists'
+        self.expect_user_transaction_error(expected_error_message,
+                                           User, self.arguments)
 
     def test_create_user_with_wrong_email_syntax(self):
         """
@@ -90,6 +100,16 @@ class ModelsTestCase(UserBaseTestCase):
                                  ' with a \'Wh\' or a \'Are\' question'
         self.expect_user_transaction_error(expected_error_message,
                                            User, self.arguments)
+        self.arguments['security_question'] = 'Where are you.'
+        expected_error_message = 'security question must end with a' \
+                                 ' question mark \'?\''
+        self.expect_user_transaction_error(expected_error_message,
+                                           User, self.arguments)
+        self.arguments['security_question'] = 'Where .,.,.,, .,are you?'
+        expected_error_message = 'security question must not contain any' \
+                                 ' punctuations mid sentence'
+        self.expect_user_transaction_error(expected_error_message,
+                                           User, self.arguments)
 
     def test_create_user_with_wrong_security_answer_syntax(self):
         """
@@ -102,47 +122,40 @@ class ModelsTestCase(UserBaseTestCase):
                                  ' contain any punctuations'
         self.expect_user_transaction_error(expected_error_message,
                                            User, self.arguments)
+        self.arguments['security_answer'] = 'm    b     bbs'
+        expected_error_message = 'Please check the spacing on' \
+                                 ' your security answer'
+        self.expect_user_transaction_error(expected_error_message,
+                                           User, self.arguments)
+        self.arguments['security_answer'] = 'Answeriolkdijrhtbfjsppoiewsasw'
+        expected_error_message = 'security answer too long.' \
+                                 ' Max of 20 characters'
+        self.expect_user_transaction_error(expected_error_message,
+                                           User, self.arguments)
+        self.arguments['security_answer'] = 'n'
+        expected_error_message = 'security answer is too short.' \
+                                 ' Min of 5 characters'
+        self.expect_user_transaction_error(expected_error_message,
+                                           User, self.arguments)
 
-    def test_user_reset_password_pass(self):
+    def test_create_user_missing_params(self):
         """
-        Test that a user can reset their password
+        Test that a user cannot be created with missing params
         :return: None
         """
-        self.u.reset_password('What is your favourite company?',
-                              'company', 'another.Pa55word')
-        self.assertTrue(self.u.authenticate('another.Pa55word'))
-
-    def test_user_reset_password_with_wrong_security_question(self):
-        """
-        Test that user cannot reset password with wrong security question
-        :return: None
-        """
-        # reset password with wrong security question
-        with self.assertRaises(UserTransactionError) as a:
-            self.u.reset_password('favourite company?',
-                                  'company', 'another.Pa55word')
-        exception = a.exception
-        self.assertEqual('wrong security question!', exception.msg)
-
-    def test_user_reset_password_with_wrong_security_answer(self):
-        """
-        Test that user cannot reset password with wrong security answer
-        :return: None
-        """
-        # reset password with wrong security answer
-        with self.assertRaises(UserTransactionError) as a:
-            self.u.reset_password('What is your favourite company?',
-                                  'no answer', 'another.Pa55word')
-        exception = a.exception
-        self.assertEqual('wrong security answer!', exception.msg)
+        self.arguments['security_answer'] = ''
+        expected_error_message = 'missing "security answer" parameter'
+        self.expect_user_transaction_error(expected_error_message,
+                                           User, self.arguments)
 
     def test_create_admin_user_pass(self):
         """
         Test that an Administrator can be created
         :return: None
         """
-        admin = Admin('admin@company.com', 'password.Pa55word',
-                      'What is your favourite company?', 'company')
+        admin = User('admin@company.com', 'password.Pa55word',
+                     'What is your favourite company?', 'company',
+                     'Administrator')
         self.assertEqual('Administrator', admin.role)
 
     def test_create_consumer_user_pass(self):
@@ -150,6 +163,6 @@ class ModelsTestCase(UserBaseTestCase):
         Test that a Consumer can be created
         :return: None
         """
-        consumer = Consumer('consumer@company.com', 'password.Pa55word',
-                            'What is your favourite company?', 'company')
+        consumer = User('consumer@company.com', 'password.Pa55word',
+                        'What is your favourite company?', 'company')
         self.assertEqual('Consumer', consumer.role)
