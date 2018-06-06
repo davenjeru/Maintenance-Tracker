@@ -40,3 +40,17 @@ class Database:
                              "security_answer_hash varchar NOT NULL);"
         self.query(create_users_table)
         self.conn.commit()
+
+        create_requests_table = "CREATE TABLE if not exists requests (" \
+                                "id integer PRIMARY KEY," \
+                                "user_id integer references" \
+                                " users(id) NOT NULL," \
+                                "title varchar NOT NULL," \
+                                "description varchar NOT NULL," \
+                                "status varchar NOT NULL" \
+                                " DEFAULT 'Pending Approval'," \
+                                "date_requested date NOT NULL," \
+                                "last_modified date," \
+                                "requested_by varchar not null);"
+        self.query(create_requests_table)
+        self.conn.commit()
