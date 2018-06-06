@@ -1,10 +1,11 @@
 import re
 import string
 
-from flask_login import UserMixin
-from werkzeug.security import generate_password_hash, check_password_hash
+from werkzeug.security import generate_password_hash
 
-users_list = []
+from MaintenanceTrackerAPI.api.v1.database import Database
+
+db = Database()
 
 
 class UserTransactionError(BaseException):
@@ -22,16 +23,14 @@ class UserTransactionError(BaseException):
         self.abort_code = abort_code
 
 
-class User(UserMixin):
+class User:
     """
-        This is the user class.
-        Defines a user and all actions that can be done by it.
-        """
-
-    id = 1
+    This is the user class.
+    Defines how a user is created and saved in the database
+    """
 
     def __init__(self, email: str, password: str, security_question: str,
-                 security_answer: str):
+                 security_answer: str, role: str = 'Consumer'):
 
         try:
             self._validate_user_details('email', email)
@@ -41,15 +40,15 @@ class User(UserMixin):
         except AssertionError as a:
             raise UserTransactionError(a.args[0])
 
-        for user in users_list:
-            if user.email == email:
-                raise UserTransactionError('a user with similar email exists')
+        # Look for a user with similar email in the database
+        if db.get_user_by_email(email) is not None:
+            raise UserTransactionError('user with similar email exists')
 
         self.email = email
         self.password_hash = generate_password_hash(password)
-        self.id = User.id
         self.security_question = security_question
-        self.security_answer = generate_password_hash(security_answer)
+        self.security_answer_hash = generate_password_hash(security_answer)
+        self.role = role
         self.__save()
 
     def __save(self):
@@ -57,42 +56,7 @@ class User(UserMixin):
         Stores user in the users list
         Increase the user id by one
         """
-        User.id += 1
-        users_list.append(self)
-
-    def get_id(self):
-        """
-        Returns unicode user ID for use by Flask-Login
-        """
-        return chr(self.id)
-
-    def authenticate(self, password: str):
-        """
-        :param password: The password to be checked
-        :return: True if the password is correct, False otherwise
-        :rtype: bool
-        """
-        return check_password_hash(self.password_hash, password)
-
-    def reset_password(self, security_question: str, security_answer: str,
-                       new_password: str):
-        """
-        Enables user to reset password
-        :param security_question: The security question that the user chose
-        :param security_answer: The answer to the above question
-        :param new_password: The new password to be set
-        """
-        if self.security_question == security_question:
-            if check_password_hash(self.security_answer, security_answer):
-                try:
-                    self._validate_user_details('password', new_password)
-                    self.password_hash = generate_password_hash(new_password)
-                except AssertionError as a:
-                    raise UserTransactionError(a.args[0])
-            else:
-                raise UserTransactionError('wrong security answer!')
-        else:
-            raise UserTransactionError('wrong security question!')
+        db.save_user(self)
 
     @staticmethod
     def _validate_user_details(name: str, item: str):
@@ -174,70 +138,5 @@ class User(UserMixin):
             validate_security_question_or_answer(name, item)
 
     @property
-    def serialize(self):
-        return {'email': self.email}
-
-    @property
     def __name__(self):
         return self.__class__.__name__
-
-
-class Consumer(User):
-    """
-    This is the class that handles consumers.
-
-    Consumers can:
-    - Make requests
-    - Edit requests
-    - View their own requests
-    - Delete requests
-    """
-
-    def __init__(self, email: str, password: str, security_question: str,
-                 security_answer: str):
-        super().__init__(email, password, security_question, security_answer)
-        self.__role = 'Consumer'
-        self.__request_count = 0
-
-    @property
-    def role(self):
-        """
-        :return: private class attribute __role
-        :rtype: str
-        """
-        return self.__role
-
-    @property
-    def serialize(self):
-        """
-        :rtype: dict
-        :return: a dictionary containing the user details
-        """
-        return dict(email=self.email, role=self.role)
-
-
-class Admin(User):
-    """
-        This is the class that handles administrators.
-
-        Administrators can:
-        - View all requests made to the app
-        - Update request statuses
-    """
-
-    def __init__(self, email: str, password: str, security_question: str,
-                 security_answer: str):
-        super().__init__(email, password, security_question, security_answer)
-        self.__role = 'Administrator'
-
-    @property
-    def role(self):
-        return self.__role
-
-    @property
-    def serialize(self):
-        """
-        :rtype: dict
-        :return: a dictionary containing the user details
-        """
-        return dict(email=self.email, role=self.role)
