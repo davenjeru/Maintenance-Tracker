@@ -7,16 +7,11 @@ class Database:
     def __init__(self,
                  db: str = os.getenv('DB_NAME'),
                  user: str = os.getenv('DB_USER'),
-                 password: str = os.getenv('DB_PASSWORD'),
-                 host: str = os.getenv('DB_HOST'),
-                 port: int = os.getenv('DB_PORT')
-                 ):
+                 password: str = os.getenv('DB_PASSWORD')):
 
         self.conn = psycopg2.connect(database=db,
                                      user=user,
-                                     password=password,
-                                     host=host,
-                                     port=int(port))
+                                     password=password)
         self.cur = None
 
     def query(self, query):
