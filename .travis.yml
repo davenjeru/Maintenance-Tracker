@@ -2,14 +2,17 @@ language: python
 python:
   - "3.6"
 
-install: pip install -r requirements.txt
+before_script:
+  - psql -c "CREATE DATABASE testdb;" -U postgres
+  - psql -c "CREATE USER dave WITH PASSWORD 'pass';" -U postgres
 
-before_script: - psql -c 'create database testdb;' -U postgres
+env:
+  global:
+    - DB_NAME=testdb
+    - DB_USER=dave
+    - DB_PASSWORD=pass
+
+install: pip install -r requirements.txt
 script:
-- export DB_NAME=testdb
-- export DB_USER=postgres
-- export DB_PASSWORD=postgres
-- export DB_HOST=loalhost
-- export DB_PORT=5432
 - nosetests -v ./MaintenanceTrackerAPI/_tests/ --with-coverage --cover-package=./MaintenanceTrackerAPI/api/
 after_script: coveralls
