@@ -11,8 +11,6 @@ env:
     - DB_NAME=testdb
     - DB_USER=dave
     - DB_PASSWORD=pass
-    - DB_HOST=loalhost
-    - DB_PORT=5432
 
 install: pip install -r requirements.txt
 script:
