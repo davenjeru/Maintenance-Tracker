@@ -1,9 +1,15 @@
 language: python
 python:
   - "3.6"
+env:
+  global:
+    - DB_NAME=testdb
+    - DB_USER=postgres
+    - DB_PASSWORD=postgres
+    - DB_HOST=loalhost
+    - DB_PORT=5432
 
 install: pip install -r requirements.txt
-
 script:
 - nosetests -v ./MaintenanceTrackerAPI/_tests/ --with-coverage --cover-package=./MaintenanceTrackerAPI/api/
 after_script: coveralls
