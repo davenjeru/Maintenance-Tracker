@@ -45,6 +45,9 @@ class Request(object):
         data = (title, description)
         try:
             db.cur.execute(sql, data)
+            request = db.cur.fetchall()
+            if request:
+                raise RequestTransactionError('similar request exists')
         except Exception:
             pass
         # TODO check for the request status to allow re-submission
