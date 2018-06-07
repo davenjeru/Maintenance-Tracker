@@ -1,3 +1,4 @@
+from flask_jwt_extended import current_user, jwt_required
 from flask_restplus import Resource, fields
 from flask_restplus.namespace import Namespace
 
@@ -42,6 +43,7 @@ class SingleUserAllRequests(Resource):
             users_ns.abort(400, 'Administrators do not have requests')
         pass
 
+    @jwt_required
     @users_ns.expect(request_model)
     @users_ns.response(201, 'Request made successfully')
     @users_ns.response(400, 'Bad request')
@@ -58,9 +60,7 @@ class SingleUserAllRequests(Resource):
         4. Duplicate requests will not be created
 
         """
-        current_user = None
-
-        if current_user.id != user_id:
+        if current_user['user_id'] != user_id:
             users_ns.abort(403)
 
         title, description, request_type = None, None, None
@@ -78,6 +78,17 @@ class SingleUserAllRequests(Resource):
             request = Request(current_user, request_type, title, description)
         except RequestTransactionError as e:
             users_ns.abort(e.abort_code, e.msg)
-        output = generate_request_output(self, request, 'post')
+
+        request_dict = dict(
+            requested_by=request.requested_by,
+            request_type=request.type,
+            title=request.title,
+            description=request.description,
+            date_requested=request.date_requested,
+            status=request.status,
+            last_modified=request.last_modified
+        )
+
+        output = generate_request_output(self, request_dict, 'post')
         response = self.api.make_response(output, 201)
         return response
