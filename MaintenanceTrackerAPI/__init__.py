@@ -35,4 +35,17 @@ def create_app(config_name):
 
         app.before_first_request(prepare_tables)
 
+    @jwt.token_in_blacklist_loader
+    def token_in_blacklist(decrypted_token):
+        jti = decrypted_token['jti']
+        db = Database()
+        token = db.get_token_by_jti(jti)
+        return bool(token)
+
+    @jwt.user_loader_callback_loader
+    def load_user(identity):
+        db = Database()
+        user = db.get_user_by_email(identity['email'])
+        return user
+
     return app

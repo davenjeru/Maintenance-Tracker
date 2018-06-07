@@ -4,6 +4,10 @@ import os
 class Config(object):
     """Parent configuration class"""
     DEBUG = False
+    JWT_TOKEN_LOCATION = 'headers'
+    JWT_HEADER_NAME = 'ACCESS_TOKEN'
+    JWT_HEADER_TYPE = ''
+    JWT_BLACKLIST_ENABLED = True
 
 
 class Development(Config):

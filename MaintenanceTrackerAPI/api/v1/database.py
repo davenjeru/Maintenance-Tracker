@@ -54,7 +54,7 @@ class Database:
 
         create_token_blacklist_table = "CREATE TABLE if not exists tokens (" \
                                        "id serial PRIMARY KEY," \
-                                       "jti varchar NOT NULL," \
+                                       "jti varchar NOT NULL unique," \
                                        "expires timestamp NOT NULL);"
         self.query(create_token_blacklist_table)
         self.conn.commit()
@@ -121,3 +121,13 @@ class Database:
         self.cur = self.conn.cursor()
         self.cur.execute(sql, data)
         self.conn.commit()
+
+    def get_token_by_jti(self, jti):
+        query = "select * from tokens where jti={}".format(
+            "'" + jti + "'")
+        self.query(query)
+        tokens = self.cur.fetchall()
+        if tokens:
+            return tokens[0]
+        else:
+            return None
