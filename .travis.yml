@@ -2,18 +2,15 @@ language: python
 python:
   - "3.6"
 
-addons:
-  postgresql: "10"
-  apt:
-    packages:
-      - postgresql-10
-      - postgres-server-dev-10.0
+before_script:
+  - psql -c "CREATE DATABASE testdb;" -U postgres
+  - psql -c "CREATE USER dave WITH PASSWORD 'pass';" -U postgres
 
 env:
   global:
     - DB_NAME=testdb
-    - DB_USER=postgres
-    - DB_PASSWORD=postgres
+    - DB_USER=dave
+    - DB_PASSWORD=pass
     - DB_HOST=loalhost
     - DB_PORT=5432
 
