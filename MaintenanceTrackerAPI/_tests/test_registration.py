@@ -45,7 +45,7 @@ class RegisterTestCase(BaseTestCase):
         response = self.register('consumer2@company.com', password_tuple,
                                  security_tuple)
         self.assertIn(b'user with similar email exists', response.data)
-        self.assert400(response)
+        self.assertEqual(409, response.status_code)
 
     def test_admin_register_pass(self):
         """
@@ -66,7 +66,7 @@ class RegisterTestCase(BaseTestCase):
         response = self.register('admin2@company.com', password_tuple,
                                  security_tuple)
         self.assertIn(b'user with similar email exists', response.data)
-        self.assert400(response)
+        self.assertEqual(409, response.status_code)
 
     def test_register_missing_parameter(self):
         """
