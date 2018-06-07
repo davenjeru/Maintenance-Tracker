@@ -38,17 +38,17 @@ class ViewMyRequestsTestCase(BaseTestCase):
         """
 
         if admin:
-            email = 'requestcreation@admin.com'
+            email = 'viewrequests@admin.com'
         else:
-            email = 'requestcreation@company.com'
+            email = 'viewrequests@consumer.com'
 
         if admin_views_all:
-            email = 'requestcreation@admin.com'
+            email = 'viewrequests@admin.com'
 
         access_token = self.login(dict(email=email,
                                        password='password.Pa55word'))
         if admin_views_all:
-            email = 'requestcreation@company.com'
+            email = 'viewrequests@consumer.com'
         user_id = db.get_user_by_email(email)['user_id']
         if logged_in:
             return self.client.get(api_v1.url_for(SingleUserAllRequests,
@@ -68,7 +68,6 @@ class ViewMyRequestsTestCase(BaseTestCase):
         :return:
         """
         response = self.get_requests(False)
-        print(response.data)
         self.assert401(response)
 
     def test_get_my_requests_consumer_pass(self):
@@ -77,8 +76,8 @@ class ViewMyRequestsTestCase(BaseTestCase):
         :return:
         """
         response = self.get_requests()
-        self.assert200(response)
         self.assertIn(b'requests', response.data)
+        self.assert200(response.data)
 
     def test_get_my_requests_admin_fail(self):
         """
