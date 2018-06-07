@@ -4,6 +4,7 @@ from flask_restplus.namespace import Namespace
 
 from MaintenanceTrackerAPI.api.v1.boilerplate import generate_request_output, \
     get_validated_payload, extract_from_payload
+from MaintenanceTrackerAPI.api.v1.database import Database
 from MaintenanceTrackerAPI.api.v1.exceptions import PayloadExtractionError, \
     RequestTransactionError
 from MaintenanceTrackerAPI.api.v1.models.request_model import Request
@@ -23,8 +24,12 @@ request_model = users_ns.model('request_model', {
                                          ' to justify this request.')
 })
 
+db = Database()
+
 
 class SingleUserAllRequests(Resource):
+    @jwt_required
+    @users_ns.doc(security='access_token')
     @users_ns.response(200, "Success")
     @users_ns.response(401, "You are not logged in hence unauthorized")
     @users_ns.response(403, "You are logged in but you are not allowed"
@@ -35,15 +40,22 @@ class SingleUserAllRequests(Resource):
         """
         # abort with 403 if the user is not an administrator or the id
         # stored in the session is not equal to the id in the route
-        current_user = None
-        if current_user.id != user_id and current_user.role != 'Administrator':
+        if current_user['user_id'] != user_id \
+                and current_user['role'] != 'Administrator':
             users_ns.abort(403)
 
-        if current_user.id == user_id and current_user.role == 'Administrator':
+        if current_user['user_id'] == user_id \
+                and current_user['role'] == 'Administrator':
             users_ns.abort(400, 'Administrators do not have requests')
-        pass
+
+        requests = db.get_requests()
+        output = dict(requests=requests)
+        response = self.api.make_response(output, 200)
+        return response
+
 
     @jwt_required
+    @users_ns.doc(security='access_token')
     @users_ns.expect(request_model)
     @users_ns.response(201, 'Request made successfully')
     @users_ns.response(400, 'Bad request')

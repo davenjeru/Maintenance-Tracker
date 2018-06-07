@@ -90,6 +90,7 @@ class Database:
                 security_answer_hash=item[4],
                 role=item[5]
             )
+        self.conn.commit()
         return user
 
     def save_user(self, user):
@@ -127,7 +128,50 @@ class Database:
             "'" + jti + "'")
         self.query(query)
         tokens = self.cur.fetchall()
+        self.conn.commit()
         if tokens:
             return tokens[0]
         else:
             return None
+
+    def get_requests(self):
+        query = 'select * from requests;'
+        self.query(query)
+        requests = self.cur.fetchall()
+        if not requests:
+            return
+        return_list = []
+        for a_request in requests:
+            request_dict = dict(
+                requested_by=a_request[8],
+                request_type=a_request[2],
+                title=a_request[3],
+                description=a_request[4],
+                date_requested=str(a_request[6]),
+                status=a_request[5],
+                last_modified=str(a_request[7])
+            )
+            return_list.append(request_dict)
+        self.conn.commit()
+        return return_list
+
+    def get_request_by_id(self, request_id: int):
+        sql = 'select * from requests where id=%s;'
+        data = (request_id,)
+        self.cur = self.conn.cursor()
+        self.cur.execute(sql, data)
+        requests = self.cur.fetchall()
+        if not requests:
+            return
+        a_request = requests[0]
+        request_dict = dict(
+            requested_by=a_request[8],
+            request_type=a_request[2],
+            title=a_request[3],
+            description=a_request[4],
+            date_requested=str(a_request[6]),
+            status=a_request[5],
+            last_modified=str(a_request[7])
+        )
+        self.conn.commit()
+        return request_dict
