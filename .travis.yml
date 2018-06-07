@@ -4,12 +4,22 @@ python:
 
 install: pip install -r requirements.txt
 
+addons:
+  postgresql: "10"
+  apt:
+    packages:
+    - postgresql-10
+    - postgres-server-dev-10.0
+
+env:
+  global:
+  - DB_NAME=testdb
+  - DB_USER=postgres
+  - DB_PASSWORD=postgres
+  - DB_HOST=loalhost
+  - DB_PORT=5432
+
 before_script: - psql -c 'create database testdb;' -U postgres
 script:
-- export DB_NAME=testdb
-- export DB_USER=postgres
-- export DB_PASSWORD=postgres
-- export DB_HOST=loalhost
-- export DB_PORT=5432
 - nosetests -v ./MaintenanceTrackerAPI/_tests/ --with-coverage --cover-package=./MaintenanceTrackerAPI/api/
 after_script: coveralls
