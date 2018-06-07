@@ -206,3 +206,6 @@ class MakeRequestTestCase(RequestBaseTestCase):
         expected_error_message = 'similar request exists'
         self.expect_request_transaction_error(expected_error_message, Request,
                                               self.arguments)
+
+
+db.drop_all()

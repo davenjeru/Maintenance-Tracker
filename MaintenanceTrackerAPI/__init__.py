@@ -1,6 +1,7 @@
 from flask import Flask
 
 from MaintenanceTrackerAPI.api.v1 import api_v1_blueprint
+from MaintenanceTrackerAPI.api.v1.auth.login import jwt
 from MaintenanceTrackerAPI.api.v1.database import Database
 from instance.config import app_config
 
@@ -24,6 +25,7 @@ def create_app(config_name):
     app.register_blueprint(api_v1_blueprint)
 
     # register extensions
+    jwt.init_app(app)
 
     if config_name == 'development':
         def prepare_tables():

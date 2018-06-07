@@ -85,26 +85,8 @@ def safe_user_output(resource: Resource, user: dict):
     :return: dict
     """
     api = resource.api
-    user.pop('password_hash', None)
-    user.pop('security_answer_hash', None)
-    user.pop('user_id', None)
-    user.pop('security_question', None)
-    return user
-
-
-def check_id_availability(the_id: int, a_list: list, context: str):
-    """
-    Checks for the availability of an item's ID in a given list
-    :param the_id: the ID to be checked
-    :param a_list: the list from where to check from
-    :param context: used for displaying the error message
-    :return: the item if found, abort otherwise
-    """
-    for an_item in a_list:
-        if an_item.id == the_id:
-            return an_item
-    else:
-        raise PayloadExtractionError('{0} not found!'.format(context), 404)
+    output = dict(email=user['email'], role=user['role'])
+    return output
 
 
 def safe_request_output(resource: Resource, the_request: dict):

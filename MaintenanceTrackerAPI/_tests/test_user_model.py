@@ -168,6 +168,6 @@ class CreateUserTestCase(UserBaseTestCase):
         Test that a Consumer can be created
         :return: None
         """
-        consumer = User('consumer@company.com', 'password.Pa55word',
+        consumer = User('consumer1@company.com', 'password.Pa55word',
                         'What is your favourite company?', 'company')
         self.assertEqual('Consumer', consumer.role)

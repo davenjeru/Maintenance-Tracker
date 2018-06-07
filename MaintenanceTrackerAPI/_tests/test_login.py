@@ -3,6 +3,8 @@ from MaintenanceTrackerAPI.api.v1 import api_v1
 from MaintenanceTrackerAPI.api.v1.auth import Login
 
 # clear database
+from MaintenanceTrackerAPI.api.v1.models.user_model import User
+
 db.drop_all()
 
 # create tables
@@ -21,11 +23,13 @@ class LoginTestCase(BaseTestCase):
         return self.client.post(api_v1.url_for(Login), data=str(data),
                                 content_type='application/json')
 
-    def test_login(self):
+    def test_z_login(self):
         """
         Test that a user can log in.
         :return: None
         """
+        u = User('consumer@company.com', 'password.Pa55word',
+                 'What is your favourite company?', 'Company')
         email = 'consumer@company.com'
         password = 'password.Pa55word'
         response = self.login(email, password)
@@ -33,7 +37,7 @@ class LoginTestCase(BaseTestCase):
         self.assertIn(b'user logged in successfully', response.data)
         self.assertIn(b'access_token', response.data)
 
-    def test_login_fail(self):
+    def test_z_login_fail(self):
         """
         Test that user should not log in with wrong or unknown credentials
         :return: None
@@ -46,9 +50,13 @@ class LoginTestCase(BaseTestCase):
 
         email = 'email254@company.com'
         response = self.login(email, password)
-        self.assert400(response)
-        self.assertIn(b'user not found', response.data)
+        self.assert404(response)
+        self.assertIn(b'User not found', response.data)
 
         response = self.login(None, password)
         self.assert400(response)
         self.assertIn(b'missing', response.data)
+
+
+db.drop_all()
+db.create_all()
