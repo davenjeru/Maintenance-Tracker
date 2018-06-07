@@ -77,7 +77,7 @@ class ViewMyRequestsTestCase(BaseTestCase):
         """
         response = self.get_requests()
         self.assertIn(b'requests', response.data)
-        self.assert200(response.data)
+        self.assert200(response)
 
     def test_get_my_requests_admin_fail(self):
         """
