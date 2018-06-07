@@ -3,8 +3,6 @@ from flask_restplus import Resource
 from werkzeug.exceptions import BadRequest
 
 from MaintenanceTrackerAPI.api.v1.exceptions import PayloadExtractionError
-from MaintenanceTrackerAPI.api.v1.models.request_model import Request
-from MaintenanceTrackerAPI.api.v1.models.user_model import User
 
 
 def get_validated_payload(resource: Resource):
@@ -57,7 +55,7 @@ def extract_from_payload(payload: dict, list_of_contexts: list):
     return tuple(return_list)
 
 
-def generate_auth_output(resource, user: User):
+def generate_auth_output(resource, user: dict):
     """
     Generates output specific to the auth namespace
     :param resource: The resource that called this function
@@ -79,7 +77,7 @@ def generate_auth_output(resource, user: User):
     return output_dict
 
 
-def safe_user_output(resource: Resource, user: User):
+def safe_user_output(resource: Resource, user: dict):
     """
     Creates a dictionary of a User's details
     :param resource:
@@ -87,8 +85,11 @@ def safe_user_output(resource: Resource, user: User):
     :return: dict
     """
     api = resource.api
-    user_dict = user.serialize
-    return user_dict
+    user.pop('password_hash', None)
+    user.pop('security_answer_hash', None)
+    user.pop('user_id', None)
+    user.pop('security_question', None)
+    return user
 
 
 def check_id_availability(the_id: int, a_list: list, context: str):
@@ -106,7 +107,7 @@ def check_id_availability(the_id: int, a_list: list, context: str):
         raise PayloadExtractionError('{0} not found!'.format(context), 404)
 
 
-def safe_request_output(resource: Resource, the_request: Request):
+def safe_request_output(resource: Resource, the_request: dict):
     """
     Creates a dictionary of Request details
     :param resource:
@@ -118,7 +119,7 @@ def safe_request_output(resource: Resource, the_request: Request):
     return request_dict
 
 
-def generate_request_output(resource: Resource, the_request: Request,
+def generate_request_output(resource: Resource, the_request: dict,
                             method: str):
     """
     Generates output specific to the users namespace

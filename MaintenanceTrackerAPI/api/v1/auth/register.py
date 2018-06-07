@@ -88,7 +88,14 @@ class Register(Resource):
         except UserTransactionError as e:
             auth_ns.abort(e.abort_code, e.msg)
 
-        output = generate_auth_output(self, created_user)
+        user = dict(
+            email=created_user.email,
+            password_hash=created_user.password_hash,
+            security_question=created_user.security_question,
+            security_answer_hash=created_user.security_answer_hash,
+            role=created_user.role
+        )
+        output = generate_auth_output(self, user)
         response = self.api.make_response(output, 201)
 
         return response
