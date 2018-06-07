@@ -4,6 +4,11 @@ from MaintenanceTrackerAPI._tests import db
 from MaintenanceTrackerAPI.api.v1.exceptions import UserTransactionError
 from MaintenanceTrackerAPI.api.v1.models.user_model import User
 
+# clear the database
+db.drop_all()
+db.create_all()
+
+# save a user in the database
 u = User('email@company.com', 'password.Pa55word',
          'What is your favourite company?', 'company')
 
