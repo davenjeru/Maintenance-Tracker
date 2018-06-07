@@ -1,4 +1,4 @@
-from flask_login import LoginManager, current_user
+from flask_jwt_extended import JWTManager
 from flask_restplus import Resource, fields
 from flask_restplus.namespace import Namespace
 
@@ -6,9 +6,9 @@ from MaintenanceTrackerAPI.api.v1.boilerplate import extract_from_payload, \
     get_validated_payload
 from MaintenanceTrackerAPI.api.v1.exceptions import PayloadExtractionError
 
-auth_ns = Namespace('auth')
+jwt = JWTManager()
 
-login_manager = LoginManager()
+auth_ns = Namespace('auth')
 
 user_login_model = auth_ns.model('user_login_model', {
     'email': fields.String(title='Your email address', required=True,
@@ -28,19 +28,15 @@ class Login(Resource):
         """
         User Login
 
-        Makes use of Flask-Login
+        Makes use of Flask-JWT-Extended
 
         Use the correct user information to login. Guidelines as stipulated
         in the register route should be followed
 
-        Note: Only one user can be logged in per client
+        Note: You will receive a token which you will need to put in the header
+        as ACCESS_TOKEN so as to reach protected endpoints
 
         """
-        try:
-            return {'message': current_user.email + ' is currently logged in'}, \
-                   400
-        except AttributeError:
-            pass
 
         email, password = None, None
         try:

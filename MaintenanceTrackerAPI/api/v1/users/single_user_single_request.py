@@ -1,4 +1,3 @@
-from flask_login import login_required, current_user
 from flask_restplus import Resource
 from flask_restplus.namespace import Namespace
 
@@ -14,7 +13,6 @@ users_ns = Namespace('users')
 
 class SingleUserSingleRequest(Resource):
 
-    @login_required
     @users_ns.response(200, 'Request retrieved successfully')
     @users_ns.response(400, 'Bad request')
     @users_ns.response(401, 'Not logged in hence unauthorized')
@@ -25,7 +23,6 @@ class SingleUserSingleRequest(Resource):
         """
         pass
 
-    @login_required
     @users_ns.expect(request_model)
     @users_ns.response(200, 'Request modified successfully')
     @users_ns.response(400, 'Bad request')
@@ -43,7 +40,7 @@ class SingleUserSingleRequest(Resource):
         5. If the request is sent with both, they both have to be different
          from the previous title and description
         """
-
+        current_user = None
         if current_user.id != user_id:
             users_ns.abort(403)
 

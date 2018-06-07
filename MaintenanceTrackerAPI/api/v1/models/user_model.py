@@ -28,7 +28,7 @@ class User:
 
         # Look for a user with similar email in the database
         if db.get_user_by_email(email) is not None:
-            raise UserTransactionError('user with similar email exists')
+            raise UserTransactionError('user with similar email exists', 409)
 
         self.email = email
         self.password_hash = generate_password_hash(password)
