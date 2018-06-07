@@ -35,14 +35,14 @@ class RegisterTestCase(BaseTestCase):
         password_tuple = ('password.Pa55word', 'password.Pa55word')
         security_tuple = ('What is your favourite company?', 'company')
 
-        response = self.register('consumer@company.com', password_tuple,
+        response = self.register('consumer2@company.com', password_tuple,
                                  security_tuple)
         self.assertEqual(201, response.status_code)
         self.assertIn(b'Consumer', response.data)
         self.assertIn(b'user registered successfully', response.data)
 
         # try to create consumer again with the same email address
-        response = self.register('consumer@company.com', password_tuple,
+        response = self.register('consumer2@company.com', password_tuple,
                                  security_tuple)
         self.assertIn(b'user with similar email exists', response.data)
         self.assert400(response)
@@ -56,14 +56,14 @@ class RegisterTestCase(BaseTestCase):
         password_tuple = ('password.Pa55word', 'password.Pa55word')
         security_tuple = ('What is your favourite company?', 'company')
 
-        response = self.register('admin@company.com', password_tuple,
+        response = self.register('admin2@company.com', password_tuple,
                                  security_tuple, role='Administrator')
         self.assertEqual(201, response.status_code)
         self.assertIn(b'Admin', response.data)
         self.assertIn(b'user registered successfully', response.data)
 
         # try to create administrator again with the same email address
-        response = self.register('admin@company.com', password_tuple,
+        response = self.register('admin2@company.com', password_tuple,
                                  security_tuple)
         self.assertIn(b'user with similar email exists', response.data)
         self.assert400(response)

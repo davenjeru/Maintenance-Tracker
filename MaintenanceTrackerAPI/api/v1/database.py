@@ -60,9 +60,9 @@ class Database:
         self.conn.commit()
 
     def drop_all(self):
-        self.query("drop table requests;")
-        self.query("drop table users;")
-        self.query("drop table tokens;")
+        self.query("drop table if exists requests;")
+        self.query("drop table if exists users;")
+        self.query("drop table if exists tokens;")
         self.conn.commit()
 
     def get_user_by_email(self, email: str):
