@@ -97,7 +97,15 @@ def safe_request_output(resource: Resource, the_request: dict):
     :return: dict
     """
     api = resource.api
-    request_dict = the_request.serialize
+    request_dict = dict(
+        requested_by=the_request['requested_by'],
+        request_type=the_request['request_type'],
+        title=the_request['title'],
+        description=the_request['description'],
+        date_requested=str(the_request['date_requested']),
+        status=the_request['status'],
+        last_modified=str(the_request['last_modified'])
+    )
     return request_dict
 
 
@@ -113,12 +121,10 @@ def generate_request_output(resource: Resource, the_request: dict,
     :rtype: dict
     """
     output_dict = dict(request=safe_request_output(resource, the_request))
-
-    if resource.endpoint == 'users_single_user_all_requests':
+    if 'single_user_all_requests' in resource.endpoint:
         if method == 'post':
             output_dict['message'] = 'request created successfully'
-    elif resource.endpoint == 'users_single_user_single_request':
+    elif 'users_single_user_single_request' in resource.endpoint:
         if method == 'patch':
             output_dict['message'] = 'request modified successfully'
-
     return output_dict
