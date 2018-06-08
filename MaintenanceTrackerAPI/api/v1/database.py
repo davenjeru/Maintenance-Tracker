@@ -156,6 +156,30 @@ class Database:
         self.conn.commit()
         return return_list
 
+    def get_my_requests(self, user_id: int):
+        sql = 'select * from requests where user_id=%s;'
+        data = (user_id,)
+        self.cur = self.conn.cursor()
+        self.cur.execute(sql, data)
+        requests = self.cur.fetchall()
+        if not requests:
+            return requests
+        return_list = []
+        for a_request in requests:
+            request_dict = dict(
+                request_id=a_request[0],
+                requested_by=a_request[8],
+                request_type=a_request[2],
+                title=a_request[3],
+                description=a_request[4],
+                date_requested=str(a_request[6]),
+                status=a_request[5],
+                last_modified=str(a_request[7])
+            )
+            return_list.append(request_dict)
+        self.conn.commit()
+        return return_list
+
     def get_request_by_id(self, request_id: int):
         sql = 'select * from requests where id=%s;'
         data = (request_id,)
