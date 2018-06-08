@@ -9,7 +9,7 @@ db.drop_all()
 db.create_all()
 
 # save a user in the database
-u = User('email@company.com', 'password.Pa55word',
+u = User('createuser@company.com', 'password.Pa55word',
          'What is your favourite company?', 'company')
 
 
@@ -20,7 +20,7 @@ class UserBaseTestCase(unittest.TestCase):
 
         :return: None
         """
-        self.arguments = dict(email='email@company.com',
+        self.arguments = dict(email='createuser@company.com',
                               password='password.Pa55word',
                               security_question='What'
                                                 ' is your favourite company?',
@@ -59,8 +59,7 @@ class CreateUserTestCase(UserBaseTestCase):
         Test that a user can be created
         :return: None
         """
-        self.assertEqual('email@company.com', u.email)
-        self.assertEqual(db.get_user_by_email(u.email)['user_id'], 1)
+        self.assertEqual('createuser@company.com', u.email)
 
     def test_create_duplicate_user(self):
         """
@@ -68,6 +67,11 @@ class CreateUserTestCase(UserBaseTestCase):
         database
         :return: None
         """
+        try:
+            User('createuser@company.com', 'password.Pa55word',
+                 'What is your favourite company?', 'company')
+        except UserTransactionError:
+            pass
         expected_error_message = 'user with similar email exists'
         self.expect_user_transaction_error(expected_error_message,
                                            User, self.arguments)
