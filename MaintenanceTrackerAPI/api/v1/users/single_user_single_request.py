@@ -1,15 +1,18 @@
+from flask_jwt_extended import jwt_required, current_user
 from flask_restplus import Resource
 from flask_restplus.namespace import Namespace
 
 from MaintenanceTrackerAPI.api.v1.boilerplate \
-    import generate_request_output, extract_from_payload
+    import generate_request_output, extract_from_payload, get_validated_payload, \
+    edit_request
+from MaintenanceTrackerAPI.api.v1.database import Database
 from MaintenanceTrackerAPI.api.v1.exceptions import RequestTransactionError, \
     PayloadExtractionError
 from MaintenanceTrackerAPI.api.v1.users.single_user_all_requests \
     import request_model
 
 users_ns = Namespace('users')
-
+db = Database()
 
 class SingleUserSingleRequest(Resource):
 
@@ -23,6 +26,8 @@ class SingleUserSingleRequest(Resource):
         """
         pass
 
+    @jwt_required
+    @users_ns.doc(security='access_token')
     @users_ns.expect(request_model)
     @users_ns.response(200, 'Request modified successfully')
     @users_ns.response(400, 'Bad request')
@@ -40,12 +45,17 @@ class SingleUserSingleRequest(Resource):
         5. If the request is sent with both, they both have to be different
          from the previous title and description
         """
-        current_user = None
-        if current_user.id != user_id:
+        if current_user['user_id'] != user_id:
             users_ns.abort(403)
 
+        if current_user['role'] != 'Consumer':
+            users_ns.abort(403, 'Administrators cannot edit requests')
+
         title, description, this_request, payload = None, None, None, None
-        pass
+        try:
+            payload = get_validated_payload(self)
+        except PayloadExtractionError as e:
+            users_ns.abort(e.abort_code, e.msg)
 
         try:
             title = extract_from_payload(payload, ['title'])
@@ -60,17 +70,20 @@ class SingleUserSingleRequest(Resource):
             pass
 
         details_dict = dict(title=title, description=description)
+        this_request = db.get_request_by_id(request_id)
 
+        if not this_request:
+            users_ns.abort(404, 'Request not found')
+
+        new_request = None
         try:
-            this_request = this_request.edit(current_user, details_dict)
+            new_request = edit_request(this_request, details_dict)
         except RequestTransactionError as e:
             users_ns.abort(e.abort_code, e.msg)
 
+        db.update_request(new_request, this_request)
         response = self.api.make_response(
-            generate_request_output(self, this_request,
+            generate_request_output(self, new_request,
                                     str(self.patch.__name__)), 200)
-        response.headers['location'] = self.api.url_for(SingleUserSingleRequest,
-                                                        user_id=user_id,
-                                                        request_id=request_id)
 
         return response
