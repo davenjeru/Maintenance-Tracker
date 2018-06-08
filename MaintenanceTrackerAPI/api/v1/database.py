@@ -9,9 +9,14 @@ class Database:
                  user: str = os.getenv('DB_USER'),
                  password: str = os.getenv('DB_PASSWORD')):
 
-        self.conn = psycopg2.connect(database=db,
-                                     user=user,
-                                     password=password)
+        if os.getenv('APP_CONFIG_NAME') == 'production':
+            DATABASE_URL = os.environ['DATABASE_URL']
+            self.conn = psycopg2.connect(DATABASE_URL, sslmode='require')
+        else:
+            self.conn = psycopg2.connect(database=db,
+                                         user=user,
+                                         password=password)
+
         self.cur = None
 
     def query(self, query):

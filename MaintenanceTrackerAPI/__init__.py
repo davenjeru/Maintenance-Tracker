@@ -27,24 +27,25 @@ def create_app(config_name):
     # register extensions
     jwt.init_app(app)
 
-    if config_name == 'development':
-        def prepare_tables():
-            db = Database()
+    db = Database()
+
+    def prepare_tables():
+        if config_name == 'development':
             db.drop_all()
             db.create_all()
+        if config_name == 'production':
+            db.create_all()
 
-        app.before_first_request(prepare_tables)
+    app.before_first_request(prepare_tables)
 
     @jwt.token_in_blacklist_loader
     def token_in_blacklist(decrypted_token):
         jti = decrypted_token['jti']
-        db = Database()
         token = db.get_token_by_jti(jti)
         return bool(token)
 
     @jwt.user_loader_callback_loader
     def load_user(identity):
-        db = Database()
         user = db.get_user_by_email(identity['email'])
         return user
 
