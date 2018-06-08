@@ -61,14 +61,15 @@ class EditRequestTestCase(BaseTestCase):
                         'user_id'],
                     email='editrequets@consumer.com',
                     role='Consumer'),
-                'Repair', 'My Request Title', 'An explanation of what happened '
+                'Repair', 'My Editting Title',
+                'An explanation of what happened '
                                               'to justify this request.'
             )
         except RequestTransactionError:
             pass
 
         user_id = db.get_user_by_email(email)['user_id']
-        request_id = 1
+        request_id = 2
         if logged_in:
             return self.client.patch(api_v1.url_for(SingleUserSingleRequest,
                                                     user_id=user_id,
