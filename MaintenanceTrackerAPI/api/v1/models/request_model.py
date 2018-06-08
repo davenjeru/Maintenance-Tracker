@@ -87,9 +87,11 @@ class Request(object):
             max_length = 250
             min_length = 40
         if len(item) > max_length:
-            raise AssertionError('{0} too long. Max of {1} characters allowed'.format(name, max_length))
+            raise AssertionError('{0} too long. Max of {1} characters'
+                                 ' allowed'.format(name, max_length))
         if len(item) < min_length:
-            raise AssertionError('{0} too short. Min of {1} characters allowed'.format(name, min_length))
+            raise AssertionError('{0} too short. Min of {1} characters'
+                                 ' allowed'.format(name, min_length))
 
         # check whether the title or description starts with a letter,
         # number, ',",or(

@@ -1,8 +1,12 @@
+import datetime
+
 from flask import url_for, request
 from flask_restplus import Resource
 from werkzeug.exceptions import BadRequest
 
-from MaintenanceTrackerAPI.api.v1.exceptions import PayloadExtractionError
+from MaintenanceTrackerAPI.api.v1.exceptions import PayloadExtractionError, \
+    RequestTransactionError
+from MaintenanceTrackerAPI.api.v1.models.request_model import Request
 
 
 def get_validated_payload(resource: Resource):
@@ -128,3 +132,55 @@ def generate_request_output(resource: Resource, the_request: dict,
         if method == 'patch':
             output_dict['message'] = 'request modified successfully'
     return output_dict
+
+
+def edit_request(a_request: dict, details: dict):
+    """
+    Method to edit a request
+    :param a_request: The request to be edited
+    :param details: A dictionary containing the details to be changed
+    :return: edited request
+    """
+    # make a copy of the dictionary
+    the_request = a_request.copy()
+    # check the request status
+    if the_request['status'] != 'Pending Approval':
+        raise RequestTransactionError('cannot edit a the_request which'
+                                      ' is {}'.format(the_request['status']))
+
+    title = details.get('title', None)
+    description = details.get('description', None)
+
+    try:
+        if title is not None:
+            Request._Request__validate_request_details('title', title)
+        if description is not None:
+            Request._Request__validate_request_details('description',
+                                                       description)
+    except AssertionError as e:
+        raise RequestTransactionError(e.args[0])
+
+    if title is not None:
+        if the_request['title'] == title:
+            name = 'title'
+            raise RequestTransactionError('{0} given matches'
+                                          ' the previous {0}'.format(name))
+    if description is not None:
+        if the_request['description'] == description:
+            name = 'description'
+            raise RequestTransactionError('{0} given matches the'
+                                          ' previous {0}'.format(name))
+
+        if description is not None and \
+                the_request['description'] == description:
+            raise RequestTransactionError('similar description exists')
+
+    the_request['title'] = title if title is not None else the_request['title']
+    the_request['description'] = description if description is not None \
+        else the_request['description']
+
+    if not title and not description:
+        raise RequestTransactionError('could not edit request, please '
+                                      'insert title or description')
+    the_request['last_modified'] = datetime.datetime.now()
+    return the_request

@@ -143,6 +143,7 @@ class Database:
         return_list = []
         for a_request in requests:
             request_dict = dict(
+                request_id=a_request[0],
                 requested_by=a_request[8],
                 request_type=a_request[2],
                 title=a_request[3],
@@ -165,6 +166,7 @@ class Database:
             return
         a_request = requests[0]
         request_dict = dict(
+            request_id=a_request[0],
             requested_by=a_request[8],
             request_type=a_request[2],
             title=a_request[3],
@@ -175,3 +177,17 @@ class Database:
         )
         self.conn.commit()
         return request_dict
+
+    def update_request(self, new_request: dict, old_request: dict):
+        # add things to be updated in a list of tuples
+        change_list = []
+        self.cur = self.conn.cursor()
+        for key, value in new_request.items():
+            if old_request.get(key) != value:
+                change_list.append((key, value))
+        # query the database to persist changes
+        for column, value in change_list:
+            sql = "update requests set {}=%s where id=%s;".format(column)
+            data = (value, new_request['request_id'])
+            self.cur.execute(sql, data)
+        self.conn.commit()
