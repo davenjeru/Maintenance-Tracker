@@ -2,6 +2,7 @@ from flask import Blueprint
 from flask_restplus import Api
 
 from MaintenanceTrackerAPI.api.v1.auth.login import jwt
+from MaintenanceTrackerAPI.api.v1.requests import requests_ns
 from .auth import auth_ns
 from .users import users_ns
 
@@ -32,6 +33,7 @@ api_v1.catch_all_404s = True
 # register namespaces related to this api
 api_v1.add_namespace(auth_ns)
 api_v1.add_namespace(users_ns)
+api_v1.add_namespace(requests_ns)
 
 # register extensions
 jwt._set_error_handler_callbacks(api_v1)
