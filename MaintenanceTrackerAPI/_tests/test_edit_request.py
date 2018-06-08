@@ -1,6 +1,4 @@
-from MaintenanceTrackerAPI._tests import db
-from MaintenanceTrackerAPI._tests.test_view_all_my_requests import \
-    ViewMyRequestsTestCase
+from MaintenanceTrackerAPI._tests import BaseTestCase, db
 from MaintenanceTrackerAPI.api.v1 import api_v1
 from MaintenanceTrackerAPI.api.v1.auth import Login
 from MaintenanceTrackerAPI.api.v1.exceptions import UserTransactionError, \
@@ -10,7 +8,7 @@ from MaintenanceTrackerAPI.api.v1.models.user_model import User
 from MaintenanceTrackerAPI.api.v1.users import SingleUserSingleRequest
 
 
-class EditRequestTestCase(ViewMyRequestsTestCase):
+class EditRequestTestCase(BaseTestCase):
 
     def setUp(self):
         self.data = dict(request_type=None,
@@ -43,14 +41,15 @@ class EditRequestTestCase(ViewMyRequestsTestCase):
         Helper function for editing a request.
         :param admin: Whether or not an Administrator should be used
         :param logged_in:
-        :param data: A dictionary containing data necessary for editing the request
+        :param data: A dictionary containing data necessary for editing the
+        request
         :return: response object
         """
 
         if admin:
-            email = 'viewrequests@admin.com'
+            email = 'editrequets@admin.com'
         else:
-            email = 'viewrequests@consumer.com'
+            email = 'editrequets@consumer.com'
 
         access_token = self.login(dict(email=email,
                                        password='password.Pa55word'))
@@ -58,9 +57,10 @@ class EditRequestTestCase(ViewMyRequestsTestCase):
             Request(
                 dict(
                     user_id=
-                    db.get_user_by_email('viewrequests@consumer.com')[
+                    db.get_user_by_email('editrequets@consumer.com')[
                         'user_id'],
-                    email='viewrequests@consumer.com'),
+                    email='editrequets@consumer.com',
+                    role='Consumer'),
                 'Repair', 'My Request Title', 'An explanation of what happened '
                                               'to justify this request.'
             )
@@ -71,7 +71,9 @@ class EditRequestTestCase(ViewMyRequestsTestCase):
         request_id = 1
         if logged_in:
             return self.client.patch(api_v1.url_for(SingleUserSingleRequest,
-                                                    user_id=user_id),
+                                                    user_id=user_id,
+                                                    request_id=request_id),
+                                     data=str(data),
                                      content_type='application/json',
                                      headers={
                                          'ACCESS_TOKEN':
@@ -88,7 +90,8 @@ class EditRequestTestCase(ViewMyRequestsTestCase):
         Test that login is required to access this route
         :return: None
         """
-        response = self.edit_request({'a': 'p'})
+        self.data['title'] = 'Some Really Random Request Title'
+        response = self.edit_request(self.data, logged_in=False)
         self.assert401(response)
 
     def test_consumer_can_edit_request(self):
@@ -127,7 +130,7 @@ class EditRequestTestCase(ViewMyRequestsTestCase):
         # edit the request title
         self.data['title'] = 'N dkknc/.../....;;;'
         response = self.edit_request(self.data)
-        self.assert403(response)
+        self.assert400(response)
 
     def test_edit_request_with_nothing(self):
         """
