@@ -48,7 +48,7 @@ class SingleUserAllRequests(Resource):
                 and current_user['role'] == 'Administrator':
             users_ns.abort(400, 'Administrators do not have requests')
 
-        requests = db.get_requests()
+        requests = db.get_my_requests(current_user['user_id'])
         output = dict(requests=requests)
         response = self.api.make_response(output, 200)
         return response
