@@ -5,7 +5,7 @@ from MaintenanceTrackerAPI.api.v1.exceptions import UserTransactionError, \
     RequestTransactionError
 from MaintenanceTrackerAPI.api.v1.models.request_model import Request
 from MaintenanceTrackerAPI.api.v1.models.user_model import User
-from MaintenanceTrackerAPI.api.v1.requests import SingleRequestResponse
+from MaintenanceTrackerAPI.api.v1.requests import SingleRequestAction
 
 db.drop_all()
 db.create_all()
@@ -34,11 +34,11 @@ class AdminRespondsToRequestsTestCase(BaseTestCase):
         access_token = response_dict.get('access_token', None)
         return access_token
 
-    def respond_to_requests(self, response: str, logged_in: bool = True,
+    def respond_to_requests(self, action: str, logged_in: bool = True,
                             admin=False):
         """
         Helper function for making a request via the server.
-        :param response: The response the admin is giving to this request
+        :param action: The response the admin is giving to this request
         :param admin: What user role should be used
         :param logged_in: Whether a user should be logged in or not
         :return: response object
@@ -67,17 +67,17 @@ class AdminRespondsToRequestsTestCase(BaseTestCase):
         except RequestTransactionError:
             pass
         if logged_in:
-            return self.client.put(api_v1.url_for(SingleRequestResponse,
+            return self.client.put(api_v1.url_for(SingleRequestAction,
                                                   request_id=1,
-                                                  response=response),
+                                                  action=action),
                                    content_type='application/json',
                                    headers={
                                        'ACCESS_TOKEN':
                                            access_token})
         else:
-            return self.client.put(api_v1.url_for(SingleRequestResponse,
+            return self.client.put(api_v1.url_for(SingleRequestAction,
                                                   request_id=1,
-                                                  response=response),
+                                                  action=action),
                                    content_type='application/json')
 
     def test_admin_responds_to_request_requires_login(self):

@@ -11,7 +11,7 @@ requests_ns = Namespace('requests')
 db = Database()
 
 
-class SingleRequestResponse(Resource):
+class SingleRequestAction(Resource):
 
     @jwt_required
     @requests_ns.doc(security='access_token')
@@ -20,13 +20,13 @@ class SingleRequestResponse(Resource):
     @requests_ns.response(401, 'Not logged in hence unauthorized')
     @requests_ns.response(403, 'Logged in but forbidden from viewing '
                                'these requests')
-    def put(self, request_id: int, response: str):
+    def put(self, request_id: int, action: str):
         if current_user['role'] != 'Administrator':
             requests_ns.abort(403)
 
-        responses = ['approve', 'disapprove', 'reject', 'resolve']
-        if response not in responses:
-            requests_ns.abort(400, 'response given is not recognized')
+        actions = ['approve', 'disapprove', 'reject', 'resolve']
+        if action not in actions:
+            requests_ns.abort(400, 'action given is not recognized')
 
         this_request = db.get_request_by_id(request_id)
         if this_request is None:
@@ -38,15 +38,15 @@ class SingleRequestResponse(Resource):
                            status=this_request['status'],
                            last_modified=None)
 
-        if response == 'approve':
+        if action == 'approve':
             if this_request['status'] != 'Pending Approval':
                 requests_ns.abort(409, 'Cannot approve a request that '
                                        'is {}'.format(this_request['status']
-                ))
+                                                      ))
             else:
                 new_request['status'] = 'Approved'
 
-        if response == 'disapprove':
+        if action == 'disapprove':
             if this_request['status'] != 'Pending Approval':
                 requests_ns.abort(409, 'Cannot approve a request that '
                                        'is {}'.format(
@@ -55,11 +55,11 @@ class SingleRequestResponse(Resource):
             else:
                 new_request['status'] = 'Disapproved'
 
-        if response == 'resolve':
+        if action == 'resolve':
             if this_request['status'] != 'Approved':
                 requests_ns.abort(409, 'Cannot approve a request that '
                                        'is {}'.format(this_request['status']
-                ))
+                                                      ))
             else:
                 new_request['status'] = 'Resolved'
         new_request['last_modified'] = datetime.datetime.now()
