@@ -64,7 +64,7 @@ class SingleRequestResponse(Resource):
         new_request['last_modified'] = datetime.datetime.now()
         db.update_request(new_request, old_request)
         new_request = db.get_request_by_id(request_id)
-        output = new_request
+        output = dict(request=new_request)
         output['message'] = 'Request updated successfully'
         response = self.api.make_response(output, 200)
         return response
