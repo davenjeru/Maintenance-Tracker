@@ -40,15 +40,16 @@ class SingleRequestResponse(Resource):
 
         if response == 'approve':
             if this_request['status'] != 'Pending Approval':
-                requests_ns.abort('Cannot approve a request that is {}'.format(
-                    this_request['status']
+                requests_ns.abort(409, 'Cannot approve a request that '
+                                       'is {}'.format(this_request['status']
                 ))
             else:
                 new_request['status'] = 'Approved'
 
         if response == 'disapprove':
             if this_request['status'] != 'Pending Approval':
-                requests_ns.abort('Cannot approve a request that is {}'.format(
+                requests_ns.abort(409, 'Cannot approve a request that '
+                                       'is {}'.format(
                     this_request['status']
                 ))
             else:
@@ -56,8 +57,8 @@ class SingleRequestResponse(Resource):
 
         if response == 'resolve':
             if this_request['status'] != 'Approved':
-                requests_ns.abort('Cannot approve a request that is {}'.format(
-                    this_request['status']
+                requests_ns.abort(409, 'Cannot approve a request that '
+                                       'is {}'.format(this_request['status']
                 ))
             else:
                 new_request['status'] = 'Resolved'

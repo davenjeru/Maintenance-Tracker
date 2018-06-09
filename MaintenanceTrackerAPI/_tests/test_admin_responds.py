@@ -98,9 +98,9 @@ class AdminRespondsToRequestsTestCase(BaseTestCase):
         self.assert200(response)
 
         response = self.respond_to_requests('approve', admin=True)
-        self.assertIn(b'cannot', response.data)
+        self.assertIn(b'Cannot', response.data)
 
-        response = self.respond_to_requests('approve', admin=True)
+        response = self.respond_to_requests('resolve', admin=True)
         self.assertIn(b'Resolved', response.data)
 
     def test_consumer_responds_to_request_fail(self):
@@ -120,4 +120,4 @@ class AdminRespondsToRequestsTestCase(BaseTestCase):
         self.assertIn(b'not recognized', response.data)
 
         response = self.respond_to_requests('approve', admin=True)
-        self.assertIn(b'cannot', response.data)
+        self.assertIn(b'Cannot', response.data)
