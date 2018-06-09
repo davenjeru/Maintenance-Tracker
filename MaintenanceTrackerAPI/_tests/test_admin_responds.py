@@ -5,7 +5,7 @@ from MaintenanceTrackerAPI.api.v1.exceptions import UserTransactionError, \
     RequestTransactionError
 from MaintenanceTrackerAPI.api.v1.models.request_model import Request
 from MaintenanceTrackerAPI.api.v1.models.user_model import User
-from MaintenanceTrackerAPI.api.v1.requests import SingleRequestResponse
+from MaintenanceTrackerAPI.api.v1.requests import SingleRequestAction
 
 db.drop_all()
 db.create_all()
@@ -17,7 +17,8 @@ class AdminRespondsToRequestsTestCase(BaseTestCase):
         """
         Helper function for logging in a user.
         :param data: A dictionary containing data necessary for logging in
-        :return: response object
+        :return: access token
+        :rtype str
         """
         try:
             User('adminrespondstorequests@consumer.com', 'password.Pa55word',
@@ -34,13 +35,13 @@ class AdminRespondsToRequestsTestCase(BaseTestCase):
         access_token = response_dict.get('access_token', None)
         return access_token
 
-    def respond_to_requests(self, response: str, logged_in: bool = True,
+    def respond_to_requests(self, action: str, logged_in: bool = True,
                             admin=False):
         """
-        Helper function for making a request via the server.
-        :param response: The response the admin is giving to this request
-        :param admin: What user role should be used
+        Helper function for an admin to respond to a request via the server
+        :param action: The response the admin is giving to this request
         :param logged_in: Whether a user should be logged in or not
+        :param admin: What user role should be used while sending the request
         :return: response object
         """
 
@@ -67,17 +68,17 @@ class AdminRespondsToRequestsTestCase(BaseTestCase):
         except RequestTransactionError:
             pass
         if logged_in:
-            return self.client.put(api_v1.url_for(SingleRequestResponse,
+            return self.client.put(api_v1.url_for(SingleRequestAction,
                                                   request_id=1,
-                                                  response=response),
+                                                  action=action),
                                    content_type='application/json',
                                    headers={
                                        'ACCESS_TOKEN':
                                            access_token})
         else:
-            return self.client.put(api_v1.url_for(SingleRequestResponse,
+            return self.client.put(api_v1.url_for(SingleRequestAction,
                                                   request_id=1,
-                                                  response=response),
+                                                  action=action),
                                    content_type='application/json')
 
     def test_admin_responds_to_request_requires_login(self):
@@ -90,17 +91,35 @@ class AdminRespondsToRequestsTestCase(BaseTestCase):
 
     def test_admin_responds_to_request_pass(self):
         """
-        Test that an admin can view one request
+        Test that an admin can respond to requests
         :return:
         """
         response = self.respond_to_requests('approve', admin=True)
         self.assertIn(b'Approved', response.data)
         self.assert200(response)
 
+        response = self.respond_to_requests('approve', admin=True)
+        self.assertIn(b'Cannot', response.data)
+
+        response = self.respond_to_requests('resolve', admin=True)
+        self.assertIn(b'Resolved', response.data)
+
     def test_consumer_responds_to_request_fail(self):
         """
-        Test that a consumer cannot use this route
+        Test that a consumer cannot approve/disapprove requests
         :return:
         """
         response = self.respond_to_requests('disapprove', admin=False)
         self.assert403(response)
+
+    def test_admin_responds_to_request_pfail(self):
+        """
+        Test that the route does not work without the right action or without
+        the right request status
+        :return:
+        """
+        response = self.respond_to_requests('possos', admin=True)
+        self.assertIn(b'not recognized', response.data)
+
+        response = self.respond_to_requests('approve', admin=True)
+        self.assertIn(b'Cannot', response.data)

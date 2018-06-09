@@ -33,12 +33,9 @@ class ViewOneRequestTestCase(BaseTestCase):
         access_token = response_dict.get('access_token', None)
         return access_token
 
-    def get_requests(self, logged_in: bool = True, admin=False,
-                     admin_views_all: bool = False):
+    def get_requests(self, logged_in: bool = True, admin=False):
         """
         Helper function for making a request via the server.
-        :param admin_views_all: Whether or not admin will be used to view other
-        user's request
         :param admin: What user role should be used
         :param logged_in: Whether a user should be logged in or not
         :return: response object
@@ -48,9 +45,6 @@ class ViewOneRequestTestCase(BaseTestCase):
             email = 'viewrequest@admin.com'
         else:
             email = 'viewrequest@consumer.com'
-
-        if admin_views_all:
-            email = 'viewrequest@admin.com'
 
         access_token = self.login(dict(email=email,
                                        password='password.Pa55word'))
@@ -69,8 +63,6 @@ class ViewOneRequestTestCase(BaseTestCase):
         except RequestTransactionError:
             pass
 
-        if admin_views_all:
-            email = 'viewrequests@consumer.com'
         request_id = 1
         if logged_in:
             return self.client.get(api_v1.url_for(SingleUserSingleRequest,
@@ -94,7 +86,7 @@ class ViewOneRequestTestCase(BaseTestCase):
 
     def test_get_my_request_consumer_pass(self):
         """
-        Test that a consumer can view their requests
+        Test that a consumer can view one request
         :return:
         """
         response = self.get_requests()

@@ -14,7 +14,8 @@ class ViewOneRequestTestCase(BaseTestCase):
         """
         Helper function for logging in a user.
         :param data: A dictionary containing data necessary for logging in
-        :return: response object
+        :return: access token
+        :rtype str
         """
         try:
             User('adminviewsoneuser@consumer.com', 'password.Pa55word',
@@ -34,7 +35,6 @@ class ViewOneRequestTestCase(BaseTestCase):
     def get_one_user(self, logged_in: bool = True, admin=False):
         """
         Helper function for making a request via the server.
-        :param admin_views_all: Whether or not admin will be used to view other
         user's request
         :param admin: What user role should be used
         :param logged_in: Whether a user should be logged in or not

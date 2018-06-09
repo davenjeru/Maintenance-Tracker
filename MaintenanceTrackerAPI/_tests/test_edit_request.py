@@ -19,7 +19,8 @@ class EditRequestTestCase(BaseTestCase):
         """
         Helper function for logging in a user.
         :param data: A dictionary containing data necessary for logging in
-        :return: response object
+        :return: access token
+        :rtype str
         """
         try:
             User('editrequets@consumer.com', 'password.Pa55word',

@@ -8,11 +8,16 @@ from MaintenanceTrackerAPI.api.v1.boilerplate import extract_from_payload, \
 from MaintenanceTrackerAPI.api.v1.database import Database
 from MaintenanceTrackerAPI.api.v1.exceptions import PayloadExtractionError
 
+# this is where I first use jwt, so decided to initiate it here
 jwt = JWTManager()
+
+# initiate the Database class to use its methods
 db = Database()
 
+# call the namespace that this resource belongs to
 auth_ns = Namespace('auth')
 
+# define the login model. This is solely used by SwaggerUI for documentation
 user_login_model = auth_ns.model('user_login_model', {
     'email': fields.String(title='Your email address', required=True,
                            example='myemail@company.com'),
@@ -31,17 +36,16 @@ class Login(Resource):
         """
         User Login
 
-        Makes use of Flask-JWT-Extended
-
-        Use the correct user information to login. Guidelines as stipulated
+        - Makes use of Flask-JWT-Extended
+        - Use the correct user information to login. Guidelines as stipulated
         in the register route should be followed
-
-        Note: You will receive a token which you will need to put in the header
+        - Note: You will receive a token which you will need to put in the header
         as ACCESS_TOKEN so as to reach protected endpoints
 
         """
 
         email, password = None, None
+        # try and extract email, and password from the request body
         try:
             payload = get_validated_payload(self)
             list_of_names = ['email', 'password']

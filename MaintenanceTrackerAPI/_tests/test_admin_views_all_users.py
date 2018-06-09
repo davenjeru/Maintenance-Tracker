@@ -6,12 +6,13 @@ from MaintenanceTrackerAPI.api.v1.models.user_model import User
 from MaintenanceTrackerAPI.api.v1.users.all_users import AllUsers
 
 
-class ViewMyRequestsTestCase(BaseTestCase):
+class AdminViewsAllUsersTestCase(BaseTestCase):
     def login(self, data: dict):
         """
         Helper function for logging in a user.
         :param data: A dictionary containing data necessary for logging in
-        :return: response object
+        :return: access token
+        :rtype str
         """
         try:
             User('adminviewsallusers@consumer.com', 'password.Pa55word',
@@ -30,7 +31,7 @@ class ViewMyRequestsTestCase(BaseTestCase):
 
     def get_all_users(self, logged_in: bool = True, admin=False):
         """
-        Helper function for making a request via the server.
+        Helper function for viewing all users via the server.
         :param admin: What user role should be used
         :param logged_in: Whether a user should be logged in or not
         :return: response object
@@ -65,7 +66,7 @@ class ViewMyRequestsTestCase(BaseTestCase):
 
     def test_admin_gets_all_users_pass(self):
         """
-        Test that a consumer can view their requests
+        Test that an administrator can view all users registered in the app
         :return:
         """
         response = self.get_all_users(admin=True)
@@ -74,7 +75,7 @@ class ViewMyRequestsTestCase(BaseTestCase):
 
     def test_consumer_gets_all_users_fail(self):
         """
-        Test that Administrators do not have requests
+        Test that a consumer cannot view all users registered in the app
         :return:
         """
         response = self.get_all_users()

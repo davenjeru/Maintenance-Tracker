@@ -36,7 +36,9 @@ class SingleUserAllRequests(Resource):
                             " to access this endpoint")
     def get(self):
         """
-        View all requests from a single user
+        View All Your Requests
+
+        To access your requests, you have to be logged in.
         """
         if current_user['role'] == 'Administrator':
             users_ns.abort(403, 'Administrators do not have requests')
@@ -56,14 +58,16 @@ class SingleUserAllRequests(Resource):
                        'Logged in but forbidden from performing this action')
     def post(self):
         """
-        Make a request
+        Make A Request
 
-        1. User must be logged in to make a request
-        2. Your title should have between 10 and 70 characters
-        3. Your description should have between 40 and 250 characters
-        4. Duplicate requests will not be created
+        - User must be logged in to make a request
+        - Your title should have between 10 and 70 characters
+        - Your description should have between 40 and 250 characters
+        - Duplicate requests will not be created
 
         """
+        # the docstring above is for SwaggerUI documentation purposes only
+
         if current_user['role'] == 'Administrator':
             users_ns.abort(403, 'Administrators cannot make requests')
 

@@ -18,6 +18,7 @@ class User:
     def __init__(self, email: str, password: str, security_question: str,
                  security_answer: str, role: str = 'Consumer'):
 
+        # validate the details given
         try:
             self._validate_user_details('email', email)
             self._validate_user_details('password', password)
@@ -39,8 +40,7 @@ class User:
 
     def __save(self):
         """
-        Stores user in the users list
-        Increase the user id by one
+        Saves the user in the database
         """
         db.save_user(self)
 
@@ -51,6 +51,10 @@ class User:
         :param name: context of validation
         :param item: item to be validated
         """
+
+        if not item:  # this means that the function was called with the
+            # required parameter set as None
+            raise AssertionError('missing \"{0}\" parameter'.format(name))
 
         def validate_security_question_or_answer(context: str,
                                                  validation_item: str):
@@ -104,15 +108,12 @@ class User:
                     raise AssertionError('Please check the spacing on your'
                                          ' {}'.format(context))
 
+        # use regular expressions to validate email and password
         email_pattern = re.compile(
             r"(^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$)")
         password_pattern = re.compile(
             r"(?=^.{12,80}$)(?=.*\d)"
             r"(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^;*()_+}{:'?/.,])(?!.*\s).*$")
-
-        if not item:  # this means that the function was called with the
-            # required parameter set as None
-            raise AssertionError('missing \"{0}\" parameter'.format(name))
 
         if name == 'email':
             if not bool(email_pattern.match(item)):
@@ -122,7 +123,3 @@ class User:
                 raise AssertionError('password syntax is invalid')
         elif name == 'security question' or name == 'security answer':
             validate_security_question_or_answer(name, item)
-
-    @property
-    def __name__(self):
-        return self.__class__.__name__

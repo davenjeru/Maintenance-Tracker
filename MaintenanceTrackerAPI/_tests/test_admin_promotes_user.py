@@ -14,7 +14,8 @@ class PromoteUserTestCase(BaseTestCase):
         """
         Helper function for logging in a user.
         :param data: A dictionary containing data necessary for logging in
-        :return: response object
+        :return: access token
+        :rtype str
         """
         try:
             User('adminpromotesuser@consumer.com', 'password.Pa55word',
@@ -34,9 +35,14 @@ class PromoteUserTestCase(BaseTestCase):
     def promote_or_demote_user(self, action: str, logged_in: bool = True,
                                admin=True, consumer: bool = True):
         """
-        Helper function for making a request via the server.
-        :param admin: What user role should be used
-        :param logged_in: Whether a user should be logged in or not
+        Helper function to promote or demote a user via the server.
+        :param action: 'promote' or 'demote' the user
+        :param logged_in: Whether one should be logged in while sending the
+                          request
+        :param admin: If logged_in is set to True, this parameter states whether
+                      or not an admin should be logged in
+        :param consumer: This is the user receiving the promotion/demotion
+                         set to False if the admin should receive the action
         :return: response object
         """
         user_id = 1
@@ -79,7 +85,7 @@ class PromoteUserTestCase(BaseTestCase):
 
     def test_admin_promotes_and_demotes_user_pass(self):
         """
-        Test that a consumer can view their requests
+        Test that a admin can promote or demote another user
         :return:
         """
         response = self.promote_or_demote_user('promote')
@@ -96,16 +102,24 @@ class PromoteUserTestCase(BaseTestCase):
 
     def test_consumer_promotes_user_fail(self):
         """
-        Test that Administrators do not have requests
-        :return:
+        Test that a consumer cannot promote/demote another user
+        :return: None
         """
         response = self.promote_or_demote_user('promote', admin=False)
         self.assert403(response)
 
     def test_admin_promotes_admin(self):
-        response = self.promote_or_demote_user('promote', consumer=False)
-        self.assertIn(b'cannot', response.data)
+        """
+        Test that administrators cannot demote themselves
+        :return: None
+        """
+        response = self.promote_or_demote_user('demote', consumer=False)
+        self.assertIn(b'cannot demote', response.data)
 
     def test_action_not_recognized(self):
+        """
+        Test that request cannot be processed without the right action
+        :return:
+        """
         response = self.promote_or_demote_user('ndjncjcnriubv')
         self.assertIn(b'not recognized', response.data)

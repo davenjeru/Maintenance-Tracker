@@ -6,7 +6,7 @@ from MaintenanceTrackerAPI.api.v1.models.user_model import User
 from MaintenanceTrackerAPI.api.v1.requests import SingleRequest
 
 
-class AdminViewAllRequestsTestCase(BaseTestCase):
+class AdminViewOneRequestTestCase(BaseTestCase):
     def login(self, data: dict):
         """
         Helper function for logging in a user.
@@ -28,10 +28,11 @@ class AdminViewAllRequestsTestCase(BaseTestCase):
         access_token = response_dict.get('access_token', None)
         return access_token
 
-    def get_all_requests(self, logged_in: bool = True, admin=False):
+    def get_one_request(self, logged_in: bool = True, admin=False):
         """
-        Helper function for making a request via the server.
-        :param admin: What user role should be used
+        Helper function for getting one request via the server
+        :param admin: What user role should be used when sending the request
+                      to the server
         :param logged_in: Whether a user should be logged in or not
         :return: response object
         """
@@ -58,22 +59,22 @@ class AdminViewAllRequestsTestCase(BaseTestCase):
         Test that this route requires login
         :return:
         """
-        response = self.get_all_requests(logged_in=False)
+        response = self.get_one_request(logged_in=False)
         self.assert401(response)
 
     def test_admin_gets_request_pass(self):
         """
-        Test that an admin can view one request
+        Test that an admin can view all requests made in the app
         :return:
         """
-        response = self.get_all_requests(admin=True)
+        response = self.get_one_request(admin=True)
         self.assertIn(b'request', response.data)
         self.assert200(response)
 
     def test_consumer_gets_request_fail(self):
         """
-        Test that a consumer cannot use this route
+        Test that a consumer cannot view all requests made in the app
         :return:
         """
-        response = self.get_all_requests(admin=False)
+        response = self.get_one_request(admin=False)
         self.assert403(response)
