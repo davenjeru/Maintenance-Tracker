@@ -17,7 +17,8 @@ class AdminRespondsToRequestsTestCase(BaseTestCase):
         """
         Helper function for logging in a user.
         :param data: A dictionary containing data necessary for logging in
-        :return: response object
+        :return: access token
+        :rtype str
         """
         try:
             User('adminrespondstorequests@consumer.com', 'password.Pa55word',
@@ -37,10 +38,10 @@ class AdminRespondsToRequestsTestCase(BaseTestCase):
     def respond_to_requests(self, action: str, logged_in: bool = True,
                             admin=False):
         """
-        Helper function for making a request via the server.
+        Helper function for an admin to respond to a request via the server
         :param action: The response the admin is giving to this request
-        :param admin: What user role should be used
         :param logged_in: Whether a user should be logged in or not
+        :param admin: What user role should be used while sending the request
         :return: response object
         """
 
@@ -90,7 +91,7 @@ class AdminRespondsToRequestsTestCase(BaseTestCase):
 
     def test_admin_responds_to_request_pass(self):
         """
-        Test that an admin can view one request
+        Test that an admin can respond to requests
         :return:
         """
         response = self.respond_to_requests('approve', admin=True)
@@ -105,7 +106,7 @@ class AdminRespondsToRequestsTestCase(BaseTestCase):
 
     def test_consumer_responds_to_request_fail(self):
         """
-        Test that a consumer cannot use this route
+        Test that a consumer cannot approve/disapprove requests
         :return:
         """
         response = self.respond_to_requests('disapprove', admin=False)
@@ -113,7 +114,8 @@ class AdminRespondsToRequestsTestCase(BaseTestCase):
 
     def test_admin_responds_to_request_pfail(self):
         """
-        Test that an admin can view one request
+        Test that the route does not work without the right action or without
+        the right request status
         :return:
         """
         response = self.respond_to_requests('possos', admin=True)
