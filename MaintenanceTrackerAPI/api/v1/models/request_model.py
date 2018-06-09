@@ -27,18 +27,22 @@ class Request(object):
             raise RequestTransactionError(
                 'Administrators cannot make requests!', 403)
 
+        # check the request given, return 400 if its not in the list
         types_list = ['Maintenance', 'Repair']
         if bool(request_type) and request_type not in types_list:
             raise RequestTransactionError(
                 'Cannot recognize the request type given :{}'.format(
                     request_type))
 
+        # try and validate the given data before making the request
         try:
             self.__validate_request_details('title', title)
             self.__validate_request_details('description', description)
         except AssertionError as a:
             raise RequestTransactionError(a.args[0])
 
+        # try and find a request with similar title and description in the
+        # database
         db.cur = db.conn.cursor()
         sql = 'select(title, description) from requests where (title =%s and' \
               ' description=%s)'
@@ -65,7 +69,7 @@ class Request(object):
 
     def __save(self):
         """
-        Saves the instance by adding it to a list and increases the id by one
+        Saves the the request in the database
         :return:
         """
         db.save_request(self)
@@ -76,16 +80,19 @@ class Request(object):
             Used to validate title or description depending on the context given
             :param name: the context of validation
             :param item: item to be validated
-
+            :rtype None
         """
         max_length, min_length = None, None
 
-        if name == 'title':
+        if name == 'title':  # set the title's min and max length
             max_length = 70
             min_length = 10
-        elif name == 'description':
+        elif name == 'description':  # set the description min and max length
             max_length = 250
             min_length = 40
+
+        # raise an error if the title or description given violates the min or
+        # max length guidelines
         if len(item) > max_length:
             raise AssertionError('{0} too long. Max of {1} characters'
                                  ' allowed'.format(name, max_length))
@@ -110,16 +117,19 @@ class Request(object):
         item_words = item.split(' ')
 
         for word in item_words:
-            if word.count('.') > 3:
+            if word.count('.') > 3:  # this means that there are more than three
+                # consecutive full stops
                 raise AssertionError(
                     'please check the punctuation in your {}'.format(name))
 
-            if not word:  # this means there is extra space
+            if not word:  # this means there is extra space which is not needed
                 raise AssertionError('Please check the'
                                      ' spacing on your {}'.format(name))
 
             # generate a list of characters from each word and check punctuation
             char_list = list(word)
+
+            # the code below checks for unwanted subsequent punctuations
             for i in range(len(char_list) - 1):
                 if char_list[i] in string.punctuation and char_list[i] != '.':
                     if char_list[i] in ['!', '?', '.'] and char_list[i + 1] in \
