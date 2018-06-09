@@ -47,27 +47,6 @@ class RegisterTestCase(BaseTestCase):
         self.assertIn(b'user with similar email exists', response.data)
         self.assertEqual(409, response.status_code)
 
-    def test_admin_register_pass(self):
-        """
-        Test that an Administrator is created when the role
-         is specified as 'Administrator'
-        :return: None
-        """
-        password_tuple = ('password.Pa55word', 'password.Pa55word')
-        security_tuple = ('What is your favourite company?', 'company')
-
-        response = self.register('admin2@company.com', password_tuple,
-                                 security_tuple, role='Administrator')
-        self.assertEqual(201, response.status_code)
-        self.assertIn(b'Admin', response.data)
-        self.assertIn(b'user registered successfully', response.data)
-
-        # try to create administrator again with the same email address
-        response = self.register('admin2@company.com', password_tuple,
-                                 security_tuple)
-        self.assertIn(b'user with similar email exists', response.data)
-        self.assertEqual(409, response.status_code)
-
     def test_register_missing_parameter(self):
         """
         Test that user cannot be created when a parameter is missing
