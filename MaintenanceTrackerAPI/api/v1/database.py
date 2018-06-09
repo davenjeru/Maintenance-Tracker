@@ -70,6 +70,22 @@ class Database:
         self.query("drop table if exists tokens;")
         self.conn.commit()
 
+    def get_all_users(self):
+        query = 'select * from users;'
+        self.query(query)
+        items = self.cur.fetchall()
+        if not items:
+            return []
+        users_list = []
+        for user in items:
+            user_dict = dict(
+                user_id=user[0],
+                email=user[1],
+                role=user[-1]
+            )
+            users_list.append(user_dict)
+        return users_list
+
     def get_user_by_email(self, email: str):
         """
         Returns a dictionary with the user details if a user is found.
