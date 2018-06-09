@@ -25,9 +25,7 @@ definition = dict(email=fields.String(title='Your email address',
                                                           ' favourite company?')
                   , security_answer=fields.String(title='Your security answer',
                                                   required=True,
-                                                  example='company'),
-                  role=fields.String(title='Your role', required=None,
-                                     example='Consumer'))
+                                                  example='company'))
 
 user_registration_model = auth_ns.model('user_registration_model', definition)
 
@@ -61,14 +59,14 @@ class Register(Resource):
         # This is a short cut for setting all these values to None
         #  with minimal code
         email, password, confirm_password, security_question, \
-        security_answer, role = tuple('     '.split(' '))
+        security_answer = tuple('    '.split(' '))
 
         try:
             payload = get_validated_payload(self)
             list_of_names = ['email', 'password', 'confirm_password',
-                             'security_question', 'security_answer', 'role']
+                             'security_question', 'security_answer']
             email, password, confirm_password, security_question, \
-            security_answer, role = extract_from_payload(payload, list_of_names)
+            security_answer = extract_from_payload(payload, list_of_names)
         except PayloadExtractionError as e:
             auth_ns.abort(e.abort_code, e.msg)
 
@@ -77,14 +75,8 @@ class Register(Resource):
 
         created_user = None
         try:
-            if role is None or role == 'Consumer':
-                created_user = User(email, password, security_question,
-                                    security_answer)
-            elif role == 'Administrator':
-                created_user = User(email, password, security_question,
-                                    security_answer, role=role)
-            else:
-                auth_ns.abort(400, 'role specified does not exist')
+            created_user = User(email, password, security_question,
+                                security_answer)
         except UserTransactionError as e:
             auth_ns.abort(e.abort_code, e.msg)
 
