@@ -97,6 +97,12 @@ class AdminRespondsToRequestsTestCase(BaseTestCase):
         self.assertIn(b'Approved', response.data)
         self.assert200(response)
 
+        response = self.respond_to_requests('approve', admin=True)
+        self.assertIn(b'cannot', response.data)
+
+        response = self.respond_to_requests('approve', admin=True)
+        self.assertIn(b'Resolved', response.data)
+
     def test_consumer_responds_to_request_fail(self):
         """
         Test that a consumer cannot use this route
@@ -104,3 +110,14 @@ class AdminRespondsToRequestsTestCase(BaseTestCase):
         """
         response = self.respond_to_requests('disapprove', admin=False)
         self.assert403(response)
+
+    def test_admin_responds_to_request_pfail(self):
+        """
+        Test that an admin can view one request
+        :return:
+        """
+        response = self.respond_to_requests('possos', admin=True)
+        self.assertIn(b'not recognized', response.data)
+
+        response = self.respond_to_requests('approve', admin=True)
+        self.assertIn(b'cannot', response.data)
