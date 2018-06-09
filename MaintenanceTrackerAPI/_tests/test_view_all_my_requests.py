@@ -51,15 +51,13 @@ class ViewMyRequestsTestCase(BaseTestCase):
             email = 'viewrequests@consumer.com'
         user_id = db.get_user_by_email(email)['user_id']
         if logged_in:
-            return self.client.get(api_v1.url_for(SingleUserAllRequests,
-                                                  user_id=user_id),
+            return self.client.get(api_v1.url_for(SingleUserAllRequests),
                                    content_type='application/json',
                                    headers={
                                        'ACCESS_TOKEN':
                                            access_token})
         else:
-            return self.client.get(api_v1.url_for(SingleUserAllRequests,
-                                                  user_id=user_id),
+            return self.client.get(api_v1.url_for(SingleUserAllRequests),
                                    content_type='application/json')
 
     def test_get_my_requests_requires_login(self):
@@ -86,12 +84,3 @@ class ViewMyRequestsTestCase(BaseTestCase):
         """
         response = self.get_requests(admin=True)
         self.assertIn(b'Administrators do not have requests', response.data)
-
-    def test_admin_gets_consumers_requests(self):
-        """
-        Test that an Administrator can view other consumer's requests
-        :return:
-        """
-        response = self.get_requests(admin_views_all=True)
-        self.assert200(response)
-        self.assertIn(b'requests', response.data)

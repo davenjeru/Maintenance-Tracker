@@ -177,7 +177,7 @@ class Database:
         self.query(query)
         requests = self.cur.fetchall()
         if not requests:
-            return
+            return []
         return_list = []
         for a_request in requests:
             request_dict = dict(
@@ -201,7 +201,7 @@ class Database:
         self.cur.execute(sql, data)
         requests = self.cur.fetchall()
         if not requests:
-            return requests
+            return []
         return_list = []
         for a_request in requests:
             request_dict = dict(
@@ -225,7 +225,7 @@ class Database:
         self.cur.execute(sql, data)
         requests = self.cur.fetchall()
         if not requests:
-            return
+            return None
         a_request = requests[0]
         request_dict = dict(
             request_id=a_request[0],

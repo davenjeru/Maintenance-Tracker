@@ -30,10 +30,10 @@ class SingleRequestResponse(Resource):
 
         this_request = db.get_request_by_id(request_id)
         if this_request is None:
-            requests_ns.abort(404, 'request not found')
+            requests_ns.abort(404, 'Request not found')
+
         new_request = dict(request_id=this_request['request_id'],
-                           status=None,
-                           last_modified=datetime.datetime.now())
+                           status=None)
         old_request = dict(request_id=this_request['request_id'],
                            status=this_request['status'],
                            last_modified=None)
@@ -61,10 +61,10 @@ class SingleRequestResponse(Resource):
                 ))
             else:
                 new_request['status'] = 'Resolved'
-
+        new_request['last_modified'] = datetime.datetime.now()
         db.update_request(new_request, old_request)
         new_request = db.get_request_by_id(request_id)
         output = new_request
-        output['message'] = 'Request Updated successfully'
+        output['message'] = 'Request updated successfully'
         response = self.api.make_response(output, 200)
         return response

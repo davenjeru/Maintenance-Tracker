@@ -23,19 +23,16 @@ class SingleUserSingleRequest(Resource):
     @users_ns.response(400, 'Bad request')
     @users_ns.response(401, 'Not logged in hence unauthorized')
     @users_ns.response(403, 'Logged in but forbidden from viewing this request')
-    def get(self, user_id: int, request_id: int):
+    def get(self, request_id: int):
         """
         View a single request from a specific user
         """
-        if current_user['user_id'] != user_id \
-                and current_user['role'] != 'Administrator':
-            users_ns.abort(403)
-
-        if current_user['user_id'] == user_id \
-                and current_user['role'] == 'Administrator':
-            users_ns.abort(400, 'Administrators do not have requests')
+        if current_user['role'] == 'Administrator':
+            users_ns.abort(403, 'Administrators do not have requests')
 
         request = db.get_request_by_id(request_id)
+        if not request:
+            users_ns.abort(404, 'Request not found')
         output = dict(request=request)
         response = self.api.make_response(output, 200)
         return response
@@ -48,7 +45,7 @@ class SingleUserSingleRequest(Resource):
     @users_ns.response(401, 'Not logged in hence unauthorized')
     @users_ns.response(403, 'Logged in but forbidden'
                             ' from performing this action')
-    def patch(self, user_id: int, request_id: int):
+    def patch(self, request_id: int):
         """
         Modify a request
 
@@ -59,11 +56,8 @@ class SingleUserSingleRequest(Resource):
         5. If the request is sent with both, they both have to be different
          from the previous title and description
         """
-        if current_user['user_id'] != user_id:
-            users_ns.abort(403)
-
-        if current_user['role'] != 'Consumer':
-            users_ns.abort(403, 'Administrators cannot edit requests')
+        if current_user['role'] == 'Administrator':
+            users_ns.abort(403, 'Administrators do not have requests')
 
         title, description, this_request, payload = None, None, None, None
         try:

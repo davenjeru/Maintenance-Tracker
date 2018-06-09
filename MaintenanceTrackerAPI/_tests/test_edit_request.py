@@ -68,11 +68,9 @@ class EditRequestTestCase(BaseTestCase):
         except RequestTransactionError:
             pass
 
-        user_id = db.get_user_by_email(email)['user_id']
         request_id = 2
         if logged_in:
             return self.client.patch(api_v1.url_for(SingleUserSingleRequest,
-                                                    user_id=user_id,
                                                     request_id=request_id),
                                      data=str(data),
                                      content_type='application/json',
@@ -81,7 +79,6 @@ class EditRequestTestCase(BaseTestCase):
                                              access_token})
         else:
             return self.client.patch(api_v1.url_for(SingleUserSingleRequest,
-                                                    user_id=user_id,
                                                     request_id=request_id),
                                      data=str(data),
                                      content_type='application/json')

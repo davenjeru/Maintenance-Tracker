@@ -34,25 +34,17 @@ class SingleUserAllRequests(Resource):
     @users_ns.response(401, "You are not logged in hence unauthorized")
     @users_ns.response(403, "You are logged in but you are not allowed"
                             " to access this endpoint")
-    def get(self, user_id: int):
+    def get(self):
         """
         View all requests from a single user
         """
-        # abort with 403 if the user is not an administrator or the id
-        # stored in the session is not equal to the id in the route
-        if current_user['user_id'] != user_id \
-                and current_user['role'] != 'Administrator':
-            users_ns.abort(403)
-
-        if current_user['user_id'] == user_id \
-                and current_user['role'] == 'Administrator':
-            users_ns.abort(400, 'Administrators do not have requests')
+        if current_user['role'] == 'Administrator':
+            users_ns.abort(403, 'Administrators do not have requests')
 
         requests = db.get_my_requests(current_user['user_id'])
         output = dict(requests=requests)
         response = self.api.make_response(output, 200)
         return response
-
 
     @jwt_required
     @users_ns.doc(security='access_token')
@@ -62,7 +54,7 @@ class SingleUserAllRequests(Resource):
     @users_ns.response(401, 'Not logged in hence unauthorized')
     @users_ns.response(403,
                        'Logged in but forbidden from performing this action')
-    def post(self, user_id: int):
+    def post(self):
         """
         Make a request
 
@@ -72,8 +64,8 @@ class SingleUserAllRequests(Resource):
         4. Duplicate requests will not be created
 
         """
-        if current_user['user_id'] != user_id:
-            users_ns.abort(403)
+        if current_user['role'] == 'Administrator':
+            users_ns.abort(403, 'Administrators cannot make requests')
 
         title, description, request_type = None, None, None
 

@@ -23,6 +23,8 @@ class SingleRequest(Resource):
             requests_ns.abort(403)
 
         request = db.get_request_by_id(request_id)
+        if not request:
+            requests_ns.abort(404, 'Request not found')
         output = dict(request=request)
         response = self.api.make_response(output, 200)
         return response

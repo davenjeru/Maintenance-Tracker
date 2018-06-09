@@ -15,12 +15,12 @@ users_ns.add_resource(AllUsers, '/')
 users_ns.add_resource(SingleUser, '/<int:user_id>')
 
 users_ns.add_resource(SingleUserAllRequests,
-                      '/<int:user_id>/requests',
+                      '/requests',
                       endpoint='users_single_user_all_requests')
 users_ns.add_model('request_model', request_model)
 
 users_ns.add_resource(SingleUserSingleRequest,
-                      '/<int:user_id>/requests/<int:request_id>',
+                      '/requests/<int:request_id>',
                       endpoint='users_single_user_single_request')
 
 users_ns.add_resource(SingleUserAction,
