@@ -1,5 +1,6 @@
 from flask_restplus.namespace import Namespace
 
+from MaintenanceTrackerAPI.api.v1.users.all_users import AllUsers
 from MaintenanceTrackerAPI.api.v1.users.single_user_all_requests \
     import SingleUserAllRequests, request_model
 from MaintenanceTrackerAPI.api.v1.users.single_user_single_request \
@@ -7,9 +8,11 @@ from MaintenanceTrackerAPI.api.v1.users.single_user_single_request \
 
 users_ns = Namespace('users', description='Operations related to users')
 
+users_ns.add_resource(AllUsers, '/')
+
 users_ns.add_resource(SingleUserAllRequests,
                       '/<int:user_id>/requests',
-                      endpoint='auth_single_user_all_requests')
+                      endpoint='users_single_user_all_requests')
 users_ns.add_model('request_model', request_model)
 
 users_ns.add_resource(SingleUserSingleRequest,

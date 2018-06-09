@@ -1,8 +1,12 @@
+import os
+
 from flask import Flask
 
 from MaintenanceTrackerAPI.api.v1 import api_v1_blueprint
 from MaintenanceTrackerAPI.api.v1.auth.login import jwt
 from MaintenanceTrackerAPI.api.v1.database import Database
+from MaintenanceTrackerAPI.api.v1.exceptions import UserTransactionError
+from MaintenanceTrackerAPI.api.v1.models.user_model import User
 from instance.config import app_config
 
 
@@ -35,6 +39,14 @@ def create_app(config_name):
             db.create_all()
         if config_name == 'production':
             db.create_all()
+
+        # create default administrator account
+        try:
+            User(os.getenv('ADMIN_EMAIL'), os.getenv('ADMIN_PASSWORD'),
+                 os.getenv('ADMIN_QUESTION'), os.getenv('ADMIN_ANSWER'),
+                 'Administrator')
+        except UserTransactionError:
+            pass
 
     app.before_first_request(prepare_tables)
 

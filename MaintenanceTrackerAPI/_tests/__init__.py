@@ -22,6 +22,9 @@ class BaseTestCase(TestCase):
     def setUp(self):
         self.client = self.create_app().test_client()
 
+
+class TestAppWorksTestCase(BaseTestCase):
+
     def test_no_base_url(self):
         """
         Test the root index '/' of the app
