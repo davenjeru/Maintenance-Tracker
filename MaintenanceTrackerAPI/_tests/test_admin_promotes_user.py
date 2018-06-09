@@ -90,6 +90,10 @@ class PromoteUserTestCase(BaseTestCase):
         self.assertIn(b'demoted', response.data)
         self.assert200(response)
 
+        response = self.promote_or_demote_user('demote')
+        self.assertIn(b'already', response.data)
+        self.assert200(response)
+
     def test_consumer_promotes_user_fail(self):
         """
         Test that Administrators do not have requests
@@ -101,3 +105,7 @@ class PromoteUserTestCase(BaseTestCase):
     def test_admin_promotes_admin(self):
         response = self.promote_or_demote_user('promote', consumer=False)
         self.assertIn(b'cannot', response.data)
+
+    def test_action_not_recognized(self):
+        response = self.promote_or_demote_user('ndjncjcnriubv')
+        self.assertIn(b'not recognized', response.data)
