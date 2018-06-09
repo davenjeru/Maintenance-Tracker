@@ -5,10 +5,9 @@ from flask_restplus import Resource
 from flask_restplus.namespace import Namespace
 
 from MaintenanceTrackerAPI.api.v1.boilerplate import generate_auth_output
-from MaintenanceTrackerAPI.api.v1.database import Database
+from MaintenanceTrackerAPI.api.v1.database import db
 
 auth_ns = Namespace('auth')
-db = Database()
 
 
 class Logout(Resource):

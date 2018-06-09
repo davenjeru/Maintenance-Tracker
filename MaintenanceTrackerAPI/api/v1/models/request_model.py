@@ -1,10 +1,8 @@
 import datetime
 import string
 
-from MaintenanceTrackerAPI.api.v1.database import Database
+from MaintenanceTrackerAPI.api.v1.database import db
 from MaintenanceTrackerAPI.api.v1.exceptions import RequestTransactionError
-
-db = Database()
 
 
 class Request(object):

@@ -343,3 +343,5 @@ class Database:
         self.cur.execute(sql, data)
         self.conn.commit()
         return self.get_user_by_id(user_id)
+
+db = Database()
