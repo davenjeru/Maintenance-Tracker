@@ -9,10 +9,12 @@ from MaintenanceTrackerAPI.api.v1.users.single_user_all_requests \
 from MaintenanceTrackerAPI.api.v1.users.single_user_single_request \
     import SingleUserSingleRequest
 
+# this is where the namespace, which holds related resources, is instantiated
 users_ns = Namespace('users', description='Operations related to users')
 
-users_ns.add_resource(AllUsers, '/')
-users_ns.add_resource(SingleUser, '/<int:user_id>')
+users_ns.add_resource(AllUsers, '/', endpoint='users')
+users_ns.add_resource(SingleUser, '/<int:user_id>',
+                      endpoint='users_single_user')
 
 users_ns.add_resource(SingleUserAllRequests,
                       '/requests',

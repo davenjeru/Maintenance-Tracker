@@ -17,6 +17,15 @@ class AllUsers(Resource):
     @users_ns.response(403, "You are logged in but you are not allowed"
                             " to access this endpoint")
     def get(self):
+        """
+        Admin View All Users
+
+        ## This route is restricted for administrators' user only
+        Admin can view all users
+        """
+        # the docstring above is for SwaggerUI documentation purposes only
+
+        # return 403 if the user accessing this route is not an administrator
         if current_user['role'] != 'Administrator':
             users_ns.abort(403)
 
