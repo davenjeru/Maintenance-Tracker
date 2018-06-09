@@ -84,7 +84,24 @@ class Database:
                 role=user[-1]
             )
             users_list.append(user_dict)
+        self.conn.commit()
         return users_list
+
+    def get_user_by_id(self, user_id: int):
+        query = "select * from users where id={}".format(user_id)
+        self.query(query)
+        items = self.cur.fetchall()
+        if not items:
+            return None
+        else:
+            item = items[0]
+            user = dict(
+                user_id=item[0],
+                email=item[1],
+                role=item[5]
+            )
+        self.conn.commit()
+        return user
 
     def get_user_by_email(self, email: str):
         """
