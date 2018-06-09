@@ -39,22 +39,28 @@ class Register(Resource):
         """
         User registration
 
-        1. Email address should be syntactically valid.
-        2. Password should have a minimum of 12 characters and a maximum of 80
-         characters
-        3. Password should have no spaces
-        4. Password should have at least one number, uppercase and lowercase
-         letter.
-        5. Password should have at least one of these special characters
-         !@#$%^;*()_+}{:'?/.,
-        6. Your security question should start with a 'Wh' or an 'Are' clause
-        7. There should be no punctuations in your security question
-        (apart from a compulsory question mark '?' at the end) and answer
-        8. If one wants to create an administrator account, add a role field
-         with the value set as 'Administrator'.
-        It defaults to None
+        **Email**
+        - address should be syntactically valid.
 
+        **Password**
+        - should have a minimum of **12** characters and a maximum of **80**
+        characters
+        - should have **no spaces**
+        - should have at least **one number**
+        - should at least **one uppercase and lowercase letter**.
+        - should have at least *one* of these special characters
+              !@#$%^;*()_+}{:'?/.,
+        **Security Question**
+        - will be used if and when a user wants to reset their password
+        - should start with a 'Wh' or an 'Are' clause
+        - should not contain any punctuations (apart from a compulsory question
+         mark '?' at the end)
+        - should be between 10 and 50 characters long.
+        **Security Answer**
+        - should be between 5 and 20 characters long.
+        - should not contain any punctuations
         """
+        # the docstring above is used by SwaggerUI for documentation
 
         # This is a short cut for setting all these values to None
         #  with minimal code
@@ -70,9 +76,11 @@ class Register(Resource):
         except PayloadExtractionError as e:
             auth_ns.abort(e.abort_code, e.msg)
 
+        # check if password is equal to confirm password
         if password != confirm_password:
             auth_ns.abort(400, 'passwords do not match')
 
+        # try and create the user.
         created_user = None
         try:
             created_user = User(email, password, security_question,
@@ -80,6 +88,8 @@ class Register(Resource):
         except UserTransactionError as e:
             auth_ns.abort(e.abort_code, e.msg)
 
+        # change the created user object to a dictionary for returning in the
+        # response
         user = dict(
             email=created_user.email,
             password_hash=created_user.password_hash,

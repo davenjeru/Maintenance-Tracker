@@ -20,14 +20,16 @@ class Logout(Resource):
         """
         User Logout
 
-        Makes use of Flask-JWT-Extended
-
-        The token in the headers is revoked by being added to the tokens
+        - Makes use of Flask-JWT-Extended
+        - The token in the headers is revoked by being added to the tokens
         blacklist table
-
         """
+        # get the JSON Token Identifier and its expiring time
         jti = get_raw_jwt()['jti']
         expires = datetime.datetime.utcfromtimestamp(get_raw_jwt()['exp'])
+
+        # define the SQL statement to be used and the values to be saved in the
+        # database and give the user the logout message
         sql = 'insert into tokens(jti, expires) values (%s, %s)'
         data = (jti, expires)
         db.cur = db.conn.cursor()
