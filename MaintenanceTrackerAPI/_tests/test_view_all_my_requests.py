@@ -1,4 +1,4 @@
-from MaintenanceTrackerAPI._tests import BaseTestCase, db
+from MaintenanceTrackerAPI._tests import BaseTestCase
 from MaintenanceTrackerAPI.api.v1 import api_v1
 from MaintenanceTrackerAPI.api.v1.auth import Login
 from MaintenanceTrackerAPI.api.v1.exceptions import UserTransactionError
@@ -28,8 +28,7 @@ class ViewMyRequestsTestCase(BaseTestCase):
         access_token = response_dict.get('access_token', None)
         return access_token
 
-    def get_requests(self, logged_in: bool = True, admin=False,
-                     admin_views_all: bool = False):
+    def get_requests(self, logged_in: bool = True, admin=False):
         """
         Helper function for making a request via the server.
         :param admin: What user role should be used
@@ -42,14 +41,9 @@ class ViewMyRequestsTestCase(BaseTestCase):
         else:
             email = 'viewrequests@consumer.com'
 
-        if admin_views_all:
-            email = 'viewrequests@admin.com'
-
         access_token = self.login(dict(email=email,
                                        password='password.Pa55word'))
-        if admin_views_all:
-            email = 'viewrequests@consumer.com'
-        user_id = db.get_user_by_email(email)['user_id']
+
         if logged_in:
             return self.client.get(api_v1.url_for(SingleUserAllRequests),
                                    content_type='application/json',

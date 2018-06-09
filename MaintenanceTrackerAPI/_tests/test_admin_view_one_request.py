@@ -6,7 +6,7 @@ from MaintenanceTrackerAPI.api.v1.models.user_model import User
 from MaintenanceTrackerAPI.api.v1.requests import SingleRequest
 
 
-class AdminViewAllRequestsTestCase(BaseTestCase):
+class AdminViewOneRequestTestCase(BaseTestCase):
     def login(self, data: dict):
         """
         Helper function for logging in a user.
