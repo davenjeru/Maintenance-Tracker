@@ -19,7 +19,12 @@ class Database:
 
         self.cur = None
 
-    def query(self, query):
+    def query(self, query: str):
+        """
+        Method to perform most queries
+        :param query: The sql query
+        :return: None
+        """
         self.cur = self.conn.cursor()
         try:
             self.cur.execute(query)
@@ -28,10 +33,18 @@ class Database:
             return e.args[0]
 
     def close(self):
+        """
+        Method to close cursor and connection
+        :return: None
+        """
         self.cur.close()
         self.conn.close()
 
     def create_all(self):
+        """
+        Method to create all tables that will be used in the database
+        :return: None
+        """
         create_users_table = "CREATE TABLE if not exists users (" \
                              "id serial PRIMARY KEY," \
                              "email varchar UNIQUE NOT NULL," \
@@ -65,12 +78,21 @@ class Database:
         self.conn.commit()
 
     def drop_all(self):
+        """
+        Method to delete all tables from the database that are used by the app
+        :return: None
+        """
         self.query("drop table if exists requests;")
         self.query("drop table if exists users;")
         self.query("drop table if exists tokens;")
         self.conn.commit()
 
     def get_all_users(self):
+        """
+        Method to retrieve all users from the database.
+        :return: a list of dictionaries containing users information
+        :rtype list
+        """
         query = 'select * from users;'
         self.query(query)
         items = self.cur.fetchall()
@@ -88,6 +110,12 @@ class Database:
         return users_list
 
     def get_user_by_id(self, user_id: int):
+        """
+        Method to get a user by the given id
+        :param user_id: the id to search with
+        :return: A dictionary containing user's information
+        :rtype dict
+        """
         query = "select * from users where id={}".format(user_id)
         self.query(query)
         items = self.cur.fetchall()
@@ -132,6 +160,11 @@ class Database:
         return user
 
     def save_user(self, user):
+        """
+        Method that saves a user into the database
+        :param user: The User Object
+        :return: None
+        """
         email = user.email
         password_hash = user.password_hash
         security_question = user.security_question
@@ -146,6 +179,11 @@ class Database:
         self.conn.commit()
 
     def save_request(self, request):
+        """
+        Method that saves a request into the database
+        :param request: The Request object
+        :return: None
+        """
         user_id = request.user_id
         request_type = request.type
         title = request.title
@@ -162,6 +200,12 @@ class Database:
         self.conn.commit()
 
     def get_token_by_jti(self, jti):
+        """
+        Method that retrieves blacklisted tokens from the database
+        :param jti: the Json Token Identifier
+        :return: True if the token is found, False otherwise
+        :rtype bool
+        """
         query = "select * from tokens where jti={}".format(
             "'" + jti + "'")
         self.query(query)
@@ -173,6 +217,11 @@ class Database:
             return None
 
     def get_requests(self):
+        """
+        Method for retrieving all requests from the database
+        :return: A list of dictionaries containing request information
+        :rtype list
+        """
         query = 'select * from requests;'
         self.query(query)
         requests = self.cur.fetchall()
@@ -195,6 +244,13 @@ class Database:
         return return_list
 
     def get_my_requests(self, user_id: int):
+        """
+        Method for retrieving all requests belonging to a user with the given
+        user id
+        :param user_id:
+        :return: A list of dictionaries containing request information
+        :rtype list
+        """
         sql = 'select * from requests where user_id=%s;'
         data = (user_id,)
         self.cur = self.conn.cursor()
@@ -219,13 +275,19 @@ class Database:
         return return_list
 
     def get_request_by_id(self, request_id: int):
+        """
+        Method for retrieving a request of the given id
+        :param request_id:
+        :return A list of dictionaries containing request information
+        :rtype list
+        """
         sql = 'select * from requests where id=%s;'
         data = (request_id,)
         self.cur = self.conn.cursor()
         self.cur.execute(sql, data)
         requests = self.cur.fetchall()
         if not requests:
-            return None
+            return []
         a_request = requests[0]
         request_dict = dict(
             request_id=a_request[0],
@@ -241,6 +303,17 @@ class Database:
         return request_dict
 
     def update_request(self, new_request: dict, old_request: dict):
+        """
+        Method to update requests
+        Takes in  dictionaries and looks for changes in them
+        If there are changes, the attribute name which corresponds to a column
+        in the database, and the changed value are added into the 'change_list'
+        as tuples
+        Each column, value pair is updated one by one
+        :param new_request:
+        :param old_request:
+        :return: None
+        """
         # add things to be updated in a list of tuples
         change_list = []
         self.cur = self.conn.cursor()
@@ -255,6 +328,12 @@ class Database:
         self.conn.commit()
 
     def change_role(self, action: str, user_id: int):
+        """
+        Method used to change the role of a user
+        :param action: promote or demote
+        :param user_id:
+        :return: The changed user dictionary
+        """
         sql = "update users set role=%s where id=%s;"
         data = None
         if action == 'promote':

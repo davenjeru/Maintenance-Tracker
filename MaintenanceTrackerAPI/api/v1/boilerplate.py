@@ -150,14 +150,17 @@ def edit_request(a_request: dict, details: dict):
     """
     # make a copy of the dictionary
     the_request = a_request.copy()
+
     # check the request status
     if the_request['status'] != 'Pending Approval':
         raise RequestTransactionError('cannot edit a the_request which'
                                       ' is {}'.format(the_request['status']))
 
+    # retrieve the title and description from the details dictionary
     title = details.get('title', None)
     description = details.get('description', None)
 
+    # validate the details given
     try:
         if title is not None:
             Request._Request__validate_request_details('title', title)
@@ -167,6 +170,12 @@ def edit_request(a_request: dict, details: dict):
     except AssertionError as e:
         raise RequestTransactionError(e.args[0])
 
+    # raise error if no title and description was given
+    if not title and not description:
+        raise RequestTransactionError('could not edit request, please '
+                                      'insert title or description')
+
+    # check if the title or description given is the same
     if title is not None:
         if the_request['title'] == title:
             name = 'title'
@@ -178,16 +187,11 @@ def edit_request(a_request: dict, details: dict):
             raise RequestTransactionError('{0} given matches the'
                                           ' previous {0}'.format(name))
 
-        if description is not None and \
-                the_request['description'] == description:
-            raise RequestTransactionError('similar description exists')
-
+    # change the details if they are not None
     the_request['title'] = title if title is not None else the_request['title']
     the_request['description'] = description if description is not None \
         else the_request['description']
 
-    if not title and not description:
-        raise RequestTransactionError('could not edit request, please '
-                                      'insert title or description')
+    # change the 'last_modified' timestamp and return
     the_request['last_modified'] = datetime.datetime.now()
     return the_request
