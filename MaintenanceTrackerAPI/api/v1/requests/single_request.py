@@ -18,7 +18,17 @@ class SingleRequest(Resource):
     @requests_ns.response(401, 'Not logged in hence unauthorized')
     @requests_ns.response(403, 'Logged in but forbidden from viewing '
                                'these requests')
-    def get(self, request_id):
+    def get(self, request_id: int):
+        """
+        Administrator Views One Request
+
+        ## This route is restricted for administrators' user only
+        Allows administrators to view one request as per the request id given
+        URL
+        """
+        # the docstring above is for SwaggerUI documentation purposes only
+
+        # return 403 if the user accessing this route is not an administrator
         if current_user['role'] != 'Administrator':
             requests_ns.abort(403)
 

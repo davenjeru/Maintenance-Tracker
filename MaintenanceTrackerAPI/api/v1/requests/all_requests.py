@@ -21,11 +21,16 @@ class AllRequests(Resource):
         """
         Administrators View All Requests
 
-        This route is restricted for administrator's use only
+        ## This route is restricted for administrator's use only
+        Allows administrators to view all requests made in the app
         """
+        # the docstring above is for SwaggerUI documentation purposes only
+
+        # return 403 if the user accessing this route is not an administrator
         if current_user['role'] != 'Administrator':
             requests_ns.abort(403)
 
+        # query requests from database and return them
         requests = db.get_requests()
         output = dict(requests=requests)
         response = self.api.make_response(output, 200)
