@@ -253,3 +253,14 @@ class Database:
             data = (value, new_request['request_id'])
             self.cur.execute(sql, data)
         self.conn.commit()
+
+    def change_role(self, action: str, user_id: int):
+        sql = "update users set role=%s where id=%s;"
+        data = None
+        if action == 'promote':
+            data = ('Administrator', user_id)
+        elif action == 'demote':
+            data = ('Consumer', user_id)
+        self.cur.execute(sql, data)
+        self.conn.commit()
+        return self.get_user_by_id(user_id)

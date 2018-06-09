@@ -30,7 +30,14 @@ def get_validated_payload(resource: Resource):
     except BadRequest:
         # if an error is caught as a bad request, try and get the data from
         # request.data if its there
-        payload = eval(request.data) if bool(request.data) else None
+        try:
+            payload = eval(request.data) if bool(request.data) else None
+        except Exception as e:
+            raise PayloadExtractionError('Something is wrong'
+                                         ' with data you have provided')
+    except Exception as e:
+        raise PayloadExtractionError('Something is wrong'
+                                     ' with the data you have provided')
 
     # All the above checks have not given a payload so the only explanation
     # is that there is none hence return a 400
