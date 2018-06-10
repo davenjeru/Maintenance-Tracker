@@ -153,8 +153,9 @@ def edit_request(a_request: dict, details: dict):
 
     # check the request status
     if the_request['status'] != 'Pending Approval':
-        raise RequestTransactionError('cannot edit a the_request which'
-                                      ' is {}'.format(the_request['status']))
+        raise RequestTransactionError('cannot edit a request which'
+                                      ' is {}'.format(the_request['status']),
+                                      409)
 
     # retrieve the title and description from the details dictionary
     title = details.get('title', None)

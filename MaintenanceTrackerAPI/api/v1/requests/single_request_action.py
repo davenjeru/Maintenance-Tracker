@@ -52,26 +52,28 @@ class SingleRequestAction(Resource):
 
         if action == 'approve':
             if this_request['status'] != 'Pending Approval':
-                requests_ns.abort(409, 'Cannot approve a request that '
-                                       'is {}'.format(this_request['status']
-                                                      ))
+                requests_ns.abort(409, 'Cannot {0} a request that '
+                                       'is {1}'.format(action,
+                                                       this_request['status']
+                                                       ))
             else:
                 new_request['status'] = 'Approved'
 
         if action == 'disapprove':
             if this_request['status'] != 'Pending Approval':
-                requests_ns.abort(409, 'Cannot approve a request that '
-                                       'is {}'.format(
-                    this_request['status']
-                ))
+                requests_ns.abort(409, 'Cannot {0} a request that '
+                                       'is {1}'.format(action,
+                                                       this_request['status']
+                                                       ))
             else:
                 new_request['status'] = 'Disapproved'
 
         if action == 'resolve':
             if this_request['status'] != 'Approved':
-                requests_ns.abort(409, 'Cannot approve a request that '
-                                       'is {}'.format(this_request['status']
-                                                      ))
+                requests_ns.abort(409, 'Cannot {0} a request that '
+                                       'is {1}'.format(action,
+                                                       this_request['status']
+                                                       ))
             else:
                 new_request['status'] = 'Resolved'
 
