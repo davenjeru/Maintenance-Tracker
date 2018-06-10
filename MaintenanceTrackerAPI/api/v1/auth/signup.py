@@ -40,7 +40,7 @@ class Register(Resource):
         User registration
 
         **Email**
-        - address should be syntactically valid.
+        - email address should be syntactically valid.
 
         **Password**
         - should have a minimum of **12** characters and a maximum of **80**
@@ -50,12 +50,14 @@ class Register(Resource):
         - should at least **one uppercase and lowercase letter**.
         - should have at least *one* of these special characters
               !@#$%^;*()_+}{:'?/.,
+
         **Security Question**
         - will be used if and when a user wants to reset their password
         - should start with a 'Wh' or an 'Are' clause
         - should not contain any punctuations (apart from a compulsory question
          mark '?' at the end)
         - should be between 10 and 50 characters long.
+
         **Security Answer**
         - should be between 5 and 20 characters long.
         - should not contain any punctuations
