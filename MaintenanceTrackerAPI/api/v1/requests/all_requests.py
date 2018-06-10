@@ -2,10 +2,9 @@ from flask_jwt_extended import jwt_required, current_user
 from flask_restplus import Resource
 from flask_restplus.namespace import Namespace
 
-from MaintenanceTrackerAPI.api.v1.database import Database
+from MaintenanceTrackerAPI.api.v1.database import db
 
 requests_ns = Namespace('requests')
-db = Database()
 
 
 class AllRequests(Resource):

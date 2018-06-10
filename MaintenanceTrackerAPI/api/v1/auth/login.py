@@ -5,14 +5,11 @@ from werkzeug.security import check_password_hash
 
 from MaintenanceTrackerAPI.api.v1.boilerplate import extract_from_payload, \
     get_validated_payload, generate_auth_output
-from MaintenanceTrackerAPI.api.v1.database import Database
+from MaintenanceTrackerAPI.api.v1.database import db
 from MaintenanceTrackerAPI.api.v1.exceptions import PayloadExtractionError
 
 # this is where I first use jwt, so decided to initiate it here
 jwt = JWTManager()
-
-# initiate the Database class to use its methods
-db = Database()
 
 # call the namespace that this resource belongs to
 auth_ns = Namespace('auth')
