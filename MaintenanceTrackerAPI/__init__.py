@@ -1,6 +1,7 @@
 import os
 
 from flask import Flask
+from flask_cors import CORS
 
 from MaintenanceTrackerAPI.api.v1 import api_v1_blueprint
 from MaintenanceTrackerAPI.api.v1.auth.login import jwt
@@ -30,6 +31,7 @@ def create_app(config_name):
 
     # register extensions
     jwt.init_app(app)
+    CORS(app)
 
     def prepare_tables():
         if config_name == 'development':
