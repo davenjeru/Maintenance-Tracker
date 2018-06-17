@@ -50,7 +50,7 @@ class LoginTestCase(BaseTestCase):
 
         email = 'email254@company.com'
         response = self.login(email, password)
-        self.assert404(response)
+        self.assert401(response)
         self.assertIn(b'User not found', response.data)
 
         response = self.login(None, password)
