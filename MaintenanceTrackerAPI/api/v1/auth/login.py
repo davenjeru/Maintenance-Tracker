@@ -55,7 +55,7 @@ class Login(Resource):
 
         # return user not found if None
         if not this_user:
-            auth_ns.abort(404, 'User not found')
+            auth_ns.abort(401, 'User not found')
 
         # check if the password is okay
         if not check_password_hash(this_user['password_hash'], password):
