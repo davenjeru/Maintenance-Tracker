@@ -5,7 +5,7 @@ import psycopg2
 
 class Database:
     def __init__(self,
-                 db: str = os.getenv('DB_NAME'),
+                 db_name: str = os.getenv('DB_NAME'),
                  user: str = os.getenv('DB_USER'),
                  password: str = os.getenv('DB_PASSWORD')):
 
@@ -13,7 +13,7 @@ class Database:
             DATABASE_URL = os.environ['DATABASE_URL']
             self.conn = psycopg2.connect(DATABASE_URL, sslmode='require')
         else:
-            self.conn = psycopg2.connect(database=db,
+            self.conn = psycopg2.connect(database=db_name,
                                          user=user,
                                          password=password)
 
