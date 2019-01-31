@@ -8,6 +8,9 @@ from MaintenanceTrackerAPI.api.v1.database import db
 from MaintenanceTrackerAPI.api.v1.exceptions import UserTransactionError
 from MaintenanceTrackerAPI.api.v1.models.user_model import User
 from instance.config import app_config
+from dotenv import load_dotenv
+
+load_dotenv()
 
 
 # create app
