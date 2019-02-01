@@ -5,6 +5,7 @@ from MaintenanceTrackerAPI.api.v1.auth.login import jwt
 from MaintenanceTrackerAPI.api.v1.requests import requests_ns
 from .auth import auth_ns
 from .users import users_ns
+from .export_swagger import export_swagger
 
 # initiate blueprint
 api_v1_blueprint = Blueprint('apiV1', __name__, url_prefix='/api/v1')
@@ -34,6 +35,7 @@ api_v1.catch_all_404s = True
 api_v1.add_namespace(auth_ns)
 api_v1.add_namespace(users_ns)
 api_v1.add_namespace(requests_ns)
+api_v1.add_namespace(export_swagger)
 
 # register extensions
 jwt._set_error_handler_callbacks(api_v1)

@@ -105,3 +105,6 @@ venv.bak/
 # pycharm
 .idea/
 .xml
+
+# Files generated during request processing
+**/swagger_schema.json
