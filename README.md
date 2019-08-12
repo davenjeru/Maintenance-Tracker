@@ -97,7 +97,7 @@ Github pages: https://davenmathews.github.io/Maintenance-Tracker/UI/html/index.h
 - The endpoints documentation can be found on the path
   `api/v1` inside the browser. You can also test the endpoints [here](https://fathomless-bayou-53469.herokuapp.com/api/v1)
 - To run tests:
-    `nosetests -v ./MaintenanceTrackerAPI/_tests
+    `nosetests -v ./MaintenanceTrackerAPI/_tests`
 
 ### Deployment
 [Heroku](https://fathomless-bayou-53469.herokuapp.com/api/v1)
